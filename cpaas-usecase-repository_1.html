@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WhatsApp &amp; RCS Use Case Repository · Netcore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#FDFBF8;--bg2:#F7F2EC;--w:#FFF;--line:#E9E1D7;--line2:#D6CBBD;
+ --tx:#1A1815;--tx2:#5E574E;--tx3:#948A7B;--tx4:#BCB2A5;
+ --or:#F15A29;--or2:#D94A1D;--orBg:#FDEDE7;
+ --dk:#0B0A09;--dk2:#151311;--dkln:rgba(255,255,255,.10);
+ --wa:#25D366;--waDk:#0E8A49;--waOut:#D9FDD3;--chatbg:#EAE1D8;
+ --rcs:#0B57D0;--rcsIn:#F1F3F4;--rcsBg:#FFF;--rcsHd:#F8F9FA;--rcsTx:#1F1F1F;
+ --amb:#A9690A;--ambBg:#FDF4E4;--ambLn:#EFD8A9;
+ --disp:'Manrope',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+ --wrap:1400px;--sh:0 1px 2px rgba(26,24,21,.05),0 6px 20px rgba(26,24,21,.05);
+ --shL:0 4px 12px rgba(26,24,21,.09),0 18px 44px rgba(26,24,21,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body.lock{overflow:hidden}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:800;line-height:1.12;letter-spacing:-.036em}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--body)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 17px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:.18s;white-space:nowrap}
+.btn-p{background:var(--or);color:#fff}.btn-p:hover{background:var(--or2)}
+.btn-s{border-color:var(--line2);color:var(--tx);background:var(--w)}.btn-s:hover{border-color:var(--tx3)}
+.btn-d{border:1px solid rgba(255,255,255,.24);color:#fff;background:none}.btn-d:hover{background:rgba(255,255,255,.08)}
+.btn-xs{padding:6px 12px;font-size:11.8px}
+
+/* ===== top bar ===== */
+.top{position:sticky;top:0;z-index:80;background:rgba(11,10,9,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--dkln)}
+.topin{max-width:var(--wrap);margin:0 auto;padding:11px 28px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:11px;flex:none}
+.logo s{text-decoration:none;color:rgba(255,255,255,.34);font-weight:500;font-size:13px;font-family:var(--body);letter-spacing:0;padding-left:11px;border-left:1px solid rgba(255,255,255,.16)}
+.ncl{height:21px;width:auto;display:block;flex:none}
+.ncl .mark{fill:#FC5E02}
+.ncl .word{fill:#fff}
+.topsp{flex:1}
+.kbd{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 11px;font-size:12.4px;color:rgba(255,255,255,.5);cursor:pointer;transition:.18s}
+.kbd:hover{background:rgba(255,255,255,.12);color:#fff}
+.kbd em{font-style:normal;font-family:var(--mono);font-size:10px;background:rgba(255,255,255,.12);padding:2px 5px;border-radius:4px;letter-spacing:.04em}
+
+/* ===== hero strip ===== */
+.hs{background:var(--dk);color:#fff;padding:30px 0 34px;position:relative;overflow:hidden}
+.hs::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 800px 340px at 88% 30%,rgba(241,90,41,.17),transparent 62%)}
+.hsin{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.hs h1{font-size:clamp(1.6rem,2.7vw,2.3rem);color:#fff}
+.hs .kk{font-family:var(--mono);font-size:9.6px;letter-spacing:.18em;text-transform:uppercase;color:var(--or);margin-bottom:9px}
+.hs p{color:rgba(255,255,255,.6);font-size:13.6px;max-width:560px;margin-top:9px;line-height:1.6}
+.hstat{display:flex;gap:26px;flex:none}
+.hstat div{text-align:right}
+.hstat b{display:block;font-family:var(--disp);font-weight:800;font-size:1.6rem;letter-spacing:-.05em;line-height:1}
+.hstat s{text-decoration:none;font-size:9.6px;color:rgba(255,255,255,.42);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase}
+
+/* ===== filter bar ===== */
+.fbar{position:sticky;top:44px;z-index:70;background:rgba(253,251,248,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:13px 0}
+.frow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.frow+.frow{margin-top:9px}
+.flab{font-family:var(--mono);font-size:8.8px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);flex:none;width:64px}
+.ch{border:1px solid var(--line2);background:var(--w);border-radius:99px;padding:5px 13px;font-size:12.2px;font-weight:500;color:var(--tx2);cursor:pointer;transition:.16s;white-space:nowrap}
+.ch:hover{border-color:var(--tx3);color:var(--tx)}
+.ch.on{background:var(--tx);border-color:var(--tx);color:#fff;font-weight:600}
+.ch.wa.on{background:var(--waDk);border-color:var(--waDk)}
+.ch.rcs.on{background:var(--rcs);border-color:var(--rcs)}
+.ch i{font-style:normal;opacity:.55;margin-left:4px;font-size:10.5px}
+.vtog{display:flex;background:var(--w);border:1px solid var(--line2);border-radius:99px;padding:3px;flex:none}
+.vtog button{border:none;background:none;border-radius:99px;padding:5px 14px;font-size:12.2px;font-weight:600;color:var(--tx3);cursor:pointer;transition:.16s}
+.vtog button.on{background:var(--orBg);color:var(--or)}
+.fmeta{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12.2px;color:var(--tx3);flex:none}
+.fmeta b{color:var(--tx);font-family:var(--disp);font-weight:800}
+.clr{color:var(--or);cursor:pointer;font-weight:600;font-size:12px}
+
+/* ===== grid ===== */
+main{padding:30px 0 70px;min-height:60vh}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:18px}
+.card{background:var(--w);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh);cursor:pointer;transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shL)}
+.cthumb{height:196px;position:relative;overflow:hidden;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:center;padding-top:23px}
+.cthumb::after{content:'';position:absolute;inset:auto 0 0;height:56px;background:linear-gradient(transparent,var(--bg2))}
+.cthumb .scal{transform:scale(.62);transform-origin:top center;pointer-events:none}
+.cbadge{position:absolute;top:9px;right:9px;z-index:4;display:flex;gap:4px}
+.pill{font-family:var(--mono);font-size:8.2px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:99px;font-weight:500;background:var(--w);border:1px solid var(--line2);color:var(--tx2)}
+.pill.wa{background:rgba(14,138,73,.1);border-color:rgba(14,138,73,.3);color:var(--waDk)}
+.pill.rcs{background:rgba(11,87,208,.08);border-color:rgba(11,87,208,.28);color:var(--rcs)}
+.pill.q{background:var(--orBg);border-color:rgba(241,90,41,.3);color:var(--or)}
+.cbody{padding:15px 17px 17px;display:flex;flex-direction:column;flex:1}
+.cbody h3{font-size:.99rem;line-height:1.25;margin-bottom:6px}
+.cbody .one{font-size:12.2px;line-height:1.5;color:var(--tx2);flex:1}
+.ctags{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.tg{font-size:10.4px;color:var(--tx3);background:var(--bg2);border-radius:5px;padding:2px 7px;font-weight:500}
+.tg.st{background:var(--orBg);color:var(--or)}
+.cproof{display:flex;align-items:baseline;gap:7px;margin-top:11px}
+.cproof b{font-family:var(--disp);font-weight:800;font-size:1.28rem;letter-spacing:-.05em;color:var(--waDk);line-height:1}
+.cproof s{text-decoration:none;font-size:10.8px;color:var(--tx2);line-height:1.35}
+.ph{display:inline-block;background:var(--ambBg);border:1px dashed var(--ambLn);color:var(--amb);font-family:var(--mono);font-size:9.4px;padding:1px 6px;border-radius:4px;font-weight:500}
+
+/* ===== lifecycle rail ===== */
+.rail{display:grid;grid-template-columns:repeat(6,minmax(180px,1fr));gap:12px;overflow-x:auto;padding-bottom:14px;scrollbar-width:thin}
+.rcol{min-width:180px}
+.rhd{display:flex;align-items:center;gap:7px;padding:0 3px 10px;border-bottom:2px solid var(--line);margin-bottom:11px}
+.rhd b{font-family:var(--disp);font-weight:800;font-size:12.8px;letter-spacing:-.03em}
+.rhd s{text-decoration:none;font-family:var(--mono);font-size:9.6px;color:var(--tx3);margin-left:auto}
+.rcard{background:var(--w);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-bottom:8px;cursor:pointer;transition:.18s;box-shadow:0 1px 2px rgba(26,24,21,.04)}
+.rcard:hover{border-color:var(--or);transform:translateX(2px)}
+.rcard b{display:block;font-family:var(--disp);font-weight:700;font-size:12.4px;letter-spacing:-.022em;line-height:1.3;margin-bottom:4px}
+.rcard .rt{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.rempty{font-size:11.5px;color:var(--tx4);font-style:italic;padding:8px 3px}
+.nores{text-align:center;padding:70px 20px;color:var(--tx3)}
+.nores b{display:block;font-family:var(--disp);font-size:1.1rem;color:var(--tx);margin-bottom:6px}
+
+/* ===================================================================
+   PHONE CHROME — shared shell
+   =================================================================== */
+.dev{width:214px;flex:none;border:5px solid #17150F;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 8px 26px rgba(0,0,0,.2);position:relative}
+.dsb{display:flex;justify-content:space-between;align-items:center;padding:4px 10px 3px;font-size:8px;font-weight:700;letter-spacing:.02em}
+.dsb .r{display:flex;gap:3px;align-items:center;font-size:7px}
+.dhd{display:flex;align-items:center;gap:6px;padding:5px 9px 6px;border-bottom:1px solid #EBE6E0}
+.dhd .bk{font-size:11px;flex:none}
+.dhd .av{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:9.5px;color:#fff;flex:none}
+.dhd .tt{min-width:0;flex:1}
+.dhd .nm{font-size:9.6px;font-weight:700;display:flex;align-items:center;gap:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dhd .sb{font-size:7px;display:flex;align-items:center;gap:2px}
+.dhd .ico{display:flex;gap:8px;font-size:9.5px;flex:none}
+.vchk{font-style:normal;font-size:7.5px}
+.dbody{height:322px;overflow:hidden;position:relative}
+.dstack{height:100%;padding:8px 6px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;scrollbar-width:none}
+.dstack::-webkit-scrollbar{display:none}
+.din{display:flex;align-items:center;gap:5px;padding:5px 6px}
+.din .fld{flex:1;border-radius:99px;padding:4px 9px;font-size:7.6px;display:flex;justify-content:space-between;align-items:center}
+.din .fld em{font-style:normal;letter-spacing:.06em}
+.din .mic{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:8px;color:#fff;flex:none}
+.dnav{display:flex;justify-content:center;gap:24px;padding:3px 0 4px;background:#fff;font-size:6px;color:#C3BBB2}
+
+/* WhatsApp skin */
+.dev.wa .dsb{background:#fff;color:#2C2724}
+.dev.wa .dhd{background:#fff}
+.dev.wa .dhd .bk{color:#5A534E}
+.dev.wa .dhd .av{background:linear-gradient(135deg,var(--or),#BE3E0E)}
+.dev.wa .dhd .nm{color:#111}
+.dev.wa .dhd .nm .vchk{color:#25D366}
+.dev.wa .dhd .sb{color:#8E867D}
+.dev.wa .dhd .ico{color:#4A4440}
+.dev.wa .dbody{background-color:var(--chatbg);background-image:radial-gradient(circle at 20% 14%,rgba(0,0,0,.03) 1px,transparent 1px);background-size:19px 19px}
+.dev.wa .din{background:#F3EEE9}
+.dev.wa .din .fld{background:#fff;color:#A79E94}
+.dev.wa .din .fld em{color:#8E867D}
+.dev.wa .din .mic{background:var(--wa)}
+
+/* RCS / Google Messages skin */
+.dev.rcs .dsb{background:var(--rcsHd);color:#3C4043}
+.dev.rcs .dhd{background:var(--rcsHd);border-bottom-color:#E4E6E8}
+.dev.rcs .dhd .bk{color:#5F6368}
+.dev.rcs .dhd .av{background:linear-gradient(135deg,var(--or),#BE3E0E)}
+.dev.rcs .dhd .nm{color:var(--rcsTx)}
+.dev.rcs .dhd .nm .vchk{color:var(--rcs)}
+.dev.rcs .dhd .sb{color:var(--rcs);font-weight:600}
+.dev.rcs .dhd .ico{color:#5F6368}
+.dev.rcs .dbody{background:var(--rcsBg)}
+.dev.rcs .din{background:var(--rcsBg);border-top:1px solid #E8EAED}
+.dev.rcs .din .fld{background:var(--rcsIn);color:#80868B}
+.dev.rcs .din .fld em{color:#9AA0A6}
+.dev.rcs .din .mic{background:var(--rcs)}
+
+/* ===================================================================
+   MESSAGE PRIMITIVES
+   =================================================================== */
+@keyframes pop{from{opacity:0;transform:translateY(9px) scale(.97)}to{opacity:1;transform:none}}
+.nw{animation:pop .34s cubic-bezier(.22,1,.36,1) both}
+.bsys{align-self:center;font-size:7px;padding:3px 9px;border-radius:99px;font-family:var(--mono);letter-spacing:.05em;text-align:center;max-width:92%;line-height:1.4}
+.dev.wa .bsys{background:rgba(255,255,255,.82);color:#8E867D}
+.dev.rcs .bsys{background:var(--rcsIn);color:#5F6368}
+
+.bb{max-width:87%;font-size:9.4px;line-height:1.42;position:relative}
+.dev.wa .bb{padding:5px 8px 4px;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.09);color:#181614}
+.dev.wa .bb.in{background:#fff;align-self:flex-start;border-top-left-radius:2px}
+.dev.wa .bb.out{background:var(--waOut);align-self:flex-end;border-top-right-radius:2px}
+.dev.rcs .bb{padding:6px 10px;border-radius:16px}
+.dev.rcs .bb.in{background:var(--rcsIn);color:var(--rcsTx);align-self:flex-start;border-bottom-left-radius:4px}
+.dev.rcs .bb.out{background:var(--rcs);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.bb.pad{padding:4px}
+.bb .t{font-size:6.4px;float:right;margin:3px 0 0 7px;white-space:nowrap}
+.dev.wa .bb .t{color:#9B938A}
+.dev.wa .bb .t i{color:#3B9EDB;font-style:normal}
+.dev.rcs .bb .t{display:none}
+.bb .pd{padding:0 4px 1px}
+.bimg{height:52px;border-radius:5px;margin-bottom:5px;position:relative;overflow:hidden}
+.bimg.tall{height:74px}
+.bimg span{position:absolute;bottom:4px;left:5px;font-size:6.6px;color:rgba(255,255,255,.92);font-weight:600;letter-spacing:.03em;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.g1{background:linear-gradient(135deg,#C99A3E,#8A6321)}
+.g2{background:linear-gradient(135deg,#B4547A,#E8A9C0)}
+.g3{background:linear-gradient(135deg,#3E5A6B,#7C9AAC)}
+.g4{background:linear-gradient(135deg,#4E7A5C,#9BC4A6)}
+.g5{background:linear-gradient(135deg,#2F4F7C,#6B8CB8)}
+.g6{background:linear-gradient(135deg,#7A4E86,#B58AC4)}
+.g7{background:linear-gradient(135deg,#B5651D,#E0995A)}
+.g8{background:linear-gradient(150deg,#1F3A5F,#2E5C8A)}
+
+/* CTA buttons inside bubbles */
+.bbt{margin-top:5px;padding-top:4px;text-align:center;font-size:8.4px;font-weight:600;cursor:default;transition:.18s;border-radius:4px}
+.dev.wa .bbt{border-top:1px solid rgba(0,0,0,.08);color:#0A7CC4}
+.dev.rcs .bbt{border-top:1px solid rgba(0,0,0,.09);color:var(--rcs)}
+.dev.rcs .bb.out .bbt{border-top-color:rgba(255,255,255,.25);color:#fff}
+.bbt+.bbt{margin-top:0}
+/* tappable state */
+@keyframes tapring{0%,100%{box-shadow:0 0 0 0 rgba(241,90,41,.5)}50%{box-shadow:0 0 0 5px rgba(241,90,41,0)}}
+.bbt.tap,.chipbtn.tap,.ff.tap,.ract.tap{cursor:pointer;position:relative;background:var(--orBg)!important;color:var(--or)!important;font-weight:700;animation:tapring 1.7s infinite;z-index:3}
+.bbt.tap::after,.ract.tap::after,.ff.tap::after{content:'TAP';position:absolute;right:5px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:5.6px;letter-spacing:.1em;opacity:.55}
+.bbt.tap:hover,.chipbtn.tap:hover,.ff.tap:hover,.ract.tap:hover{background:var(--or)!important;color:#fff!important;animation:none}
+
+/* WhatsApp product tiles */
+.pgr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;align-self:flex-start;width:97%}
+.ptile{background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.11)}
+.ptile .im{height:32px}
+.ptile .tt{padding:3px 4px;font-size:6.8px;line-height:1.3;color:#181614}
+.ptile .tt b{display:block;font-weight:700;font-size:7.2px}
+.ptile.sel{outline:1.6px solid var(--waDk);outline-offset:-1.6px}
+
+/* order / payment sheet */
+.osheet{font-size:8.6px;line-height:1.75;margin-top:4px}
+.osheet .r{display:flex;justify-content:space-between;gap:8px}
+.osheet .r.tot{font-weight:700;border-top:1px solid rgba(0,0,0,.1);margin-top:3px;padding-top:3px}
+.osheet .r s{text-decoration:none;color:#8E867D}
+.osheet .r .ok{color:var(--waDk);font-weight:600}
+
+/* WhatsApp Flow overlay */
+.flow{position:absolute;inset:auto 0 0 0;background:#fff;border-radius:14px 14px 0 0;box-shadow:0 -6px 22px rgba(0,0,0,.22);z-index:8;overflow:hidden;animation:up .34s cubic-bezier(.22,1,.36,1) both}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.flow .fh{padding:8px 10px;border-bottom:1px solid #EDE9E4;display:flex;align-items:center;gap:6px}
+.flow .fh b{font-family:var(--disp);font-weight:800;font-size:9.6px;letter-spacing:-.025em;flex:1}
+.flow .fh i{font-style:normal;font-size:10px;color:#8E867D}
+.flow .fb{padding:9px 10px;display:flex;flex-direction:column;gap:5px;max-height:190px;overflow-y:auto}
+.flow .lg{font-size:7.4px;color:var(--tx3);font-family:var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.opt{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:8.4px;display:flex;justify-content:space-between;align-items:center;gap:6px;color:#181614}
+.opt b{font-weight:700}
+.opt.sel{border-color:var(--waDk);background:rgba(37,211,102,.08);font-weight:600}
+.dev.rcs .opt.sel{border-color:var(--rcs);background:rgba(11,87,208,.06)}
+.opt.inp{color:var(--tx3);font-family:var(--mono);font-size:7.8px}
+.szrow{display:flex;gap:4px}
+.sz{border:1px solid var(--line);border-radius:5px;padding:4px 8px;font-size:8px;font-weight:600;color:var(--tx2)}
+.sz.sel{background:var(--waDk);border-color:var(--waDk);color:#fff}
+.flow .ff{padding:7px;text-align:center;font-size:9px;font-weight:700;font-family:var(--disp);color:#fff;background:var(--waDk)}
+.dev.rcs .flow .ff{background:var(--rcs)}
+
+/* RCS webview — a browser surface INSIDE the Messages app. Deliberately
+   skinned to read as the brand's own web page, not a native sheet. */
+.wv .ub{display:flex;align-items:center;gap:6px;padding:4px 9px;background:#E8EAED;font-family:var(--mono);font-size:7px;color:#5F6368}
+.wv .ub s{text-decoration:none;flex:1;text-align:center;letter-spacing:.02em}
+.wv .fh{background:#1A1815;border-bottom:none;padding:6px 10px}
+.wv .fh b{color:#fff;font-size:9px}
+.wv .fh i{color:rgba(255,255,255,.5)}
+.wv .opt{border-radius:5px;border-color:#DADCE0;background:#fff}
+.wv .opt.sel{border-color:var(--rcs);background:rgba(11,87,208,.05)}
+.wv .lg{color:#5F6368}
+.dev.rcs .wv .ff{background:var(--rcs);margin:0}
+.wv .wvn{font-family:var(--mono);font-size:6.2px;letter-spacing:.06em;color:#5F6368;text-align:center;padding:4px 8px 5px;background:#F1F3F4}
+
+/* overlays that take over the entire handset, above the app chrome */
+.devfull{position:absolute;inset:0;z-index:12}
+
+/* Google Search → RCS entry surface */
+.gsr{position:absolute;inset:0;background:#fff;padding:9px 8px;display:flex;flex-direction:column;gap:8px;animation:pop .34s both}
+.gsr .sb{display:flex;align-items:center;gap:6px;border:1px solid #DADCE0;border-radius:99px;padding:5px 10px;font-size:8px;color:#202124;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.gsr .sb i{font-style:normal;color:#4285F4;font-size:8.5px}
+.gsr .gl{display:flex;gap:1px;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:-.04em;justify-content:center}
+.gsr .gl b:nth-child(1){color:#4285F4}.gsr .gl b:nth-child(2){color:#EA4335}
+.gsr .gl b:nth-child(3){color:#FBBC05}.gsr .gl b:nth-child(4){color:#4285F4}
+.gsr .gl b:nth-child(5){color:#34A853}.gsr .gl b:nth-child(6){color:#EA4335}
+.gsr .biz{border:1px solid #DADCE0;border-radius:9px;overflow:hidden}
+.gsr .biz .im{height:44px}
+.gsr .biz .bd{padding:6px 8px}
+.gsr .biz .bd b{display:block;font-family:var(--disp);font-weight:700;font-size:9.4px;color:#1A0DAB;letter-spacing:-.02em}
+.gsr .biz .bd s{text-decoration:none;display:block;font-size:7.2px;color:#5F6368;margin-top:1px}
+.gsr .biz .bd .rt{font-size:7.4px;color:#5F6368;margin-top:3px}
+.gsr .biz .bd .rt em{font-style:normal;color:#E8A200}
+.gsr .acts{display:flex;gap:4px;padding:0 8px 8px}
+.gsr .ga{flex:1;border:1px solid #DADCE0;border-radius:99px;padding:4px 0;text-align:center;font-size:7.4px;font-weight:600;color:var(--rcs);transition:.18s}
+.gsr .ga.tap{background:var(--orBg)!important;border-color:var(--or)!important;color:var(--or)!important;font-weight:700;animation:tapring 1.7s infinite;cursor:pointer}
+.gsr .ga.tap:hover{background:var(--or)!important;color:#fff!important;animation:none}
+.gsr .hint2{font-size:7px;color:#80868B;text-align:center;font-family:var(--mono);letter-spacing:.05em;margin-top:auto}
+
+/* RCS rich card */
+.rcard2{background:#fff;border:1px solid #E1E3E6;border-radius:14px;overflow:hidden;align-self:flex-start;width:87%;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.rcard2 .im{height:64px;position:relative}
+.rcard2 .im span{position:absolute;bottom:5px;left:7px;font-size:6.8px;color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.rcard2 .bd{padding:7px 9px 8px}
+.rcard2 .bd b{display:block;font-family:var(--disp);font-weight:700;font-size:9.6px;letter-spacing:-.02em;color:var(--rcsTx);margin-bottom:2px}
+.rcard2 .bd p{font-size:8.4px;line-height:1.42;color:#5F6368}
+.ract{border-top:1px solid #EDEFF1;padding:6px;text-align:center;font-size:8.6px;font-weight:600;color:var(--rcs);transition:.18s;border-radius:4px}
+
+/* RCS carousel */
+.rcar{display:flex;gap:6px;overflow-x:auto;align-self:stretch;padding:0 2px 4px;scrollbar-width:none}
+.rcar::-webkit-scrollbar{display:none}
+.rcar .rcard2{width:112px;flex:none}
+.rcar .rcard2 .im{height:52px}
+.rcar .rcard2 .bd{padding:6px 7px}
+.rcar .rcard2 .bd b{font-size:8.6px}
+.rcar .rcard2 .bd p{font-size:7.6px}
+.rcar .ract{font-size:8px;padding:5px}
+
+/* RCS suggested chips */
+.chips{display:flex;gap:5px;flex-wrap:wrap;align-self:flex-start;margin-top:1px}
+.chipbtn{border:1px solid var(--rcs);color:var(--rcs);background:#fff;border-radius:99px;padding:4px 11px;font-size:8.2px;font-weight:600;transition:.18s}
+.dev.wa .chipbtn{border-color:#0A7CC4;color:#0A7CC4}
+
+/* typing indicator */
+.typ{align-self:flex-start;display:flex;gap:3px;padding:7px 10px;border-radius:16px}
+.dev.wa .typ{background:#fff;border-top-left-radius:2px}
+.dev.rcs .typ{background:var(--rcsIn)}
+.typ i{width:4px;height:4px;border-radius:50%;background:#B0AAA3;animation:bl 1.2s infinite}
+.typ i:nth-child(2){animation-delay:.18s}.typ i:nth-child(3){animation-delay:.36s}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
+
+/* incoming call screen (voice use cases) */
+.callsc{width:150px;flex:none;background:linear-gradient(165deg,#12312A,#0A1F1A);border-radius:20px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:7px;color:#fff;box-shadow:var(--shL)}
+.callsc .av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--or),#BE3E0E);display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:18px}
+.callsc .nm{font-family:var(--disp);font-weight:700;font-size:11.5px;text-align:center}
+.callsc .vf{font-size:8.4px;color:#4FE08B}
+.callsc .st{font-size:8.4px;color:rgba(255,255,255,.55)}
+.callsc .rr{display:flex;gap:12px;margin-top:5px}
+.cb{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px}
+.cb.red{background:#E5484D}.cb.grn{background:#22A559}
+
+/* ===================================================================
+   DETAIL DRAWER
+   =================================================================== */
+.scrim{position:fixed;inset:0;background:rgba(11,10,9,.5);backdrop-filter:blur(3px);z-index:95;opacity:0;pointer-events:none;transition:opacity .28s}
+.scrim.on{opacity:1;pointer-events:auto}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(1080px,96vw);background:var(--bg);z-index:96;box-shadow:-14px 0 50px rgba(11,10,9,.3);transform:translateX(102%);transition:transform .38s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column}
+.dr.on{transform:none}
+.drhd{padding:17px 26px;border-bottom:1px solid var(--line);background:var(--w);display:flex;align-items:flex-start;gap:16px;flex:none}
+.drhd .ti{flex:1;min-width:0}
+.drhd h2{font-size:1.32rem;line-height:1.2;margin-bottom:6px}
+.drhd .one{font-size:13px;color:var(--tx2);line-height:1.5}
+.drtags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.drx{border:none;background:var(--bg2);width:31px;height:31px;border-radius:50%;font-size:16px;color:var(--tx2);cursor:pointer;flex:none;transition:.16s}
+.drx:hover{background:var(--tx);color:#fff}
+.drtools{display:flex;gap:6px;flex-wrap:wrap;flex:none}
+.drbody{flex:1;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:0}
+.drL{padding:22px 26px 40px;border-right:1px solid var(--line)}
+.drR{padding:22px 26px 40px;background:var(--bg2)}
+
+.blk{margin-bottom:22px}
+.blk>.k{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--or);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.blk>.k::after{content:'';flex:1;height:1px;background:var(--line)}
+.kv{display:grid;grid-template-columns:104px 1fr;gap:7px 14px;font-size:12.6px}
+.kv dt{color:var(--tx3);font-size:11.5px;padding-top:1px}
+.kv dd{color:var(--tx);font-weight:500}
+.mono{font-family:var(--mono);font-size:11.5px;background:var(--w);border:1px solid var(--line);border-radius:6px;padding:6px 9px;display:inline-block;color:var(--tx2)}
+.caps{display:flex;gap:5px;flex-wrap:wrap}
+.cap{background:var(--w);border:1px solid var(--line2);border-radius:6px;padding:3px 9px;font-size:11.5px;font-weight:500}
+.ol{list-style:none;display:flex;flex-direction:column;gap:9px}
+.ol li{display:flex;gap:9px;font-size:12.6px;line-height:1.52;color:var(--tx2)}
+.ck{width:16px;height:16px;border-radius:50%;background:var(--orBg);color:var(--or);display:grid;place-items:center;font-size:8.5px;flex:none;margin-top:3px;font-weight:800}
+.ck.n{background:var(--bg2);color:var(--tx3);font-family:var(--mono);font-size:8px}
+.verd{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.vc{background:var(--w);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.vc.pick{border-color:var(--or);box-shadow:0 0 0 3px var(--orBg)}
+.vc b{display:flex;align-items:center;gap:6px;font-family:var(--disp);font-weight:800;font-size:12.4px;margin-bottom:5px}
+.vc b em{font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.1em;background:var(--orBg);color:var(--or);padding:2px 6px;border-radius:99px;margin-left:auto}
+.vc p{font-size:11.8px;line-height:1.5}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.dot.wa{background:var(--waDk)}.dot.rcs{background:var(--rcs)}
+.obj{background:var(--ambBg);border:1px solid var(--ambLn);border-radius:10px;padding:12px 14px}
+.obj .q{font-family:var(--disp);font-weight:700;font-size:12.6px;color:var(--amb);margin-bottom:5px;line-height:1.4}
+.obj .a{font-size:12.2px;line-height:1.55;color:#6B4405}
+.tplbox{position:relative}
+.tpl{background:var(--dk);color:#E8E3DC;border-radius:10px;padding:13px 15px;font-family:var(--mono);font-size:11.4px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.tpl v{color:#F5A97F;font-style:normal}
+.cpbtn{position:absolute;top:9px;right:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:600;cursor:pointer;transition:.16s}
+.cpbtn:hover{background:var(--or);border-color:var(--or)}
+.pfbox{background:var(--w);border:1px solid var(--line);border-radius:12px;padding:15px 17px;display:flex;align-items:center;gap:16px}
+.pfbox .n{font-family:var(--disp);font-weight:800;font-size:2.1rem;letter-spacing:-.055em;color:var(--waDk);line-height:1;flex:none}
+.pfbox .l{font-size:12.2px;line-height:1.45;color:var(--tx2)}
+.pfbox .l s{text-decoration:none;display:block;font-family:var(--mono);font-size:9.6px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-top:4px}
+
+/* stage / player */
+.stage{position:sticky;top:0}
+.chtog{display:flex;background:var(--w);border:1px solid var(--line2);border-radius:99px;padding:3px;width:fit-content;margin:0 auto 16px}
+.chtog button{border:none;background:none;border-radius:99px;padding:6px 15px;font-size:12.2px;font-weight:600;color:var(--tx3);cursor:pointer;transition:.16s;display:flex;align-items:center;gap:6px}
+.chtog button.on{background:var(--tx);color:#fff}
+.chtog button.on .dot{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.chtog button:disabled{opacity:.34;cursor:not-allowed}
+.phones{display:flex;gap:20px;justify-content:center;align-items:flex-start}
+.pcol{display:flex;flex-direction:column;align-items:center;gap:9px}
+.pcap{font-family:var(--mono);font-size:8.8px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);display:flex;align-items:center;gap:6px}
+.steplab{min-height:36px;background:var(--w);border:1px solid var(--line);border-radius:99px;padding:5px 13px;font-family:var(--mono);font-size:9.4px;letter-spacing:.11em;text-transform:uppercase;color:var(--or);box-shadow:var(--sh);text-align:center;min-height:26px;display:flex;align-items:center;justify-content:center;max-width:220px;line-height:1.3}
+.player{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:11px}
+.dots{display:flex;gap:5px;align-items:center}
+.dots i{width:20px;height:4px;border-radius:99px;background:var(--line2);cursor:pointer;transition:.24s}
+.dots i.on{background:var(--or);width:32px}
+.dots i.done{background:rgba(241,90,41,.42)}
+.pbtns{display:flex;gap:7px}
+.hint{font-size:11.5px;color:var(--tx3);text-align:center;max-width:270px;line-height:1.45}
+.hint b{color:var(--or);font-weight:700}
+
+/* ===== Cmd+K palette ===== */
+.pal{position:fixed;inset:0;z-index:98;display:none;padding-top:11vh;justify-content:center;background:rgba(11,10,9,.45);backdrop-filter:blur(4px)}
+.pal.on{display:flex}
+.palbox{width:min(620px,92vw);background:var(--w);border:1px solid var(--line2);border-radius:15px;box-shadow:0 28px 70px rgba(11,10,9,.35);overflow:hidden;height:fit-content;max-height:74vh;display:flex;flex-direction:column}
+.palin{display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid var(--line)}
+.palin input{flex:1;border:none;outline:none;font-family:var(--body);font-size:16px;color:var(--tx);background:none}
+.palin input::placeholder{color:var(--tx4)}
+.palin s{text-decoration:none;font-family:var(--mono);font-size:9.6px;color:var(--tx3);background:var(--bg2);padding:3px 7px;border-radius:5px}
+.pallist{overflow-y:auto;padding:7px}
+.pi{padding:9px 12px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:11px}
+.pi.sel{background:var(--orBg)}
+.pi b{font-family:var(--disp);font-weight:700;font-size:13.4px;letter-spacing:-.02em;flex:none}
+.pi s{text-decoration:none;font-size:11.8px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pi .rt{margin-left:auto;display:flex;gap:4px;flex:none}
+.palempty{padding:26px;text-align:center;color:var(--tx3);font-size:12.6px}
+.toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,80px);background:var(--tx);color:#fff;padding:11px 20px;border-radius:99px;font-size:13px;font-weight:600;z-index:99;opacity:0;transition:.3s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.toast.on{transform:translate(-50%,0);opacity:1}
+
+/* ===== responsive ===== */
+@media(max-width:980px){
+ .drbody{grid-template-columns:1fr}
+ .drL{border-right:none;border-bottom:1px solid var(--line)}
+ .stage{position:static}
+ .rail{grid-template-columns:repeat(6,minmax(168px,1fr))}
+ .verd{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+ .wrap{padding:0 16px}.topin{padding:11px 16px}.logo s{display:none}
+ .flab{display:none}.hstat{gap:16px}
+ .hs{padding:22px 0 24px}.hs p{font-size:12.6px;margin-top:7px}
+ .hstat b{font-size:1.3rem}.hsin{gap:18px}
+ .drhd{padding:14px 16px;flex-wrap:wrap}.drL,.drR{padding:18px 16px 34px}
+ .grid{grid-template-columns:1fr}
+ .phones{flex-direction:column;align-items:center}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* float containment for bubble timestamps */
+.bb .pd,.bb .tx{display:flow-root}
+.bb .btns{clear:both}
+
+/* ===== print → one-pager ===== */
+@media print{
+ @page{margin:14mm}
+ .top,.hs,.fbar,.scrim,.pal,.toast,.drx,.drtools,.player,.chtog,.hint,.dots,.pbtns,.cpbtn,.din,.dnav{display:none!important}
+ body{background:#fff}
+ body.lock{overflow:visible}
+ .dr{position:static!important;display:block!important;width:100%;height:auto!important;transform:none!important;box-shadow:none;background:#fff}
+ .drhd{padding:0 0 12px!important;border-bottom:1px solid var(--line)}
+ .drbody{display:block!important;overflow:visible!important}
+ .drL,.drR{padding:0;border:none;background:#fff}
+ .stage{position:static!important}
+ .blk{break-inside:avoid}
+ .drR{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+ .phones{gap:26px}
+ .card,.vc,.tpl,.pfbox,.obj{break-inside:avoid}
+ main,.railwrap{display:none!important}
+ .printonly{display:block!important}
+ .ncl{height:19px}
+ .ncl .word{fill:#1A1815}
+}
+.printonly{display:none}
+</style>
+</head>
+<body>
+
+<div class="top">
+ <div class="topin">
+  <div class="logo" id="logoSlot"><s>Use Case Repository</s></div>
+  <div class="topsp"></div>
+  <div class="kbd" id="openPal"><span>Search use cases</span><em>⌘K</em></div>
+ </div>
+</div>
+
+<header class="hs">
+ <div class="wrap hsin">
+  <div>
+   <div class="kk">Sales &amp; CSM Enablement · WhatsApp + RCS</div>
+   <h1>Every use case. Both channels. One link.</h1>
+   <p>Filter by industry and lifecycle stage, open any use case to see exactly what the customer sees, and flip between WhatsApp and RCS side by side. Click the glowing button inside the phone to walk the journey live on a call.</p>
+  </div>
+  <div class="hstat">
+   <div><b id="stN">0</b><s>Use cases</s></div>
+   <div><b id="stI">0</b><s>Industries</s></div>
+   <div><b>2</b><s>Channels</s></div>
+  </div>
+ </div>
+</header>
+
+<div class="fbar">
+ <div class="wrap">
+  <div class="frow">
+   <div class="vtog" id="vtog">
+    <button data-v="grid" class="on">Grid</button>
+    <button data-v="rail">Lifecycle</button>
+   </div>
+   <span class="flab" style="width:auto;margin-left:6px">Industry</span>
+   <span id="fInd" style="display:flex;gap:7px;flex-wrap:wrap"></span>
+   <span class="flab" style="width:auto;margin-left:6px">Channel</span>
+   <span id="fCh" style="display:flex;gap:7px"></span>
+   <div class="fmeta"><span><b id="cnt">0</b> showing</span><span class="clr" id="clr">Reset</span></div>
+  </div>
+  <div class="frow">
+   <span class="flab">Stage</span><span id="fStage" style="display:flex;gap:7px;flex-wrap:wrap"></span>
+  </div>
+  <div class="frow">
+   <span class="flab">Effort</span><span id="fEff" style="display:flex;gap:7px;flex-wrap:wrap"></span>
+   <span class="flab" style="width:auto;margin-left:10px">Category</span><span id="fCat" style="display:flex;gap:7px;flex-wrap:wrap"></span>
+  </div>
+ </div>
+</div>
+
+<main>
+ <div class="wrap">
+  <div class="grid" id="grid"></div>
+  <div class="railwrap" id="railwrap" style="display:none"><div class="rail" id="rail"></div></div>
+  <div class="nores" id="nores" style="display:none"><b>Nothing matches those filters.</b>Try widening the industry or stage.</div>
+ </div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="dr" id="dr" aria-hidden="true"></aside>
+
+<div class="pal" id="pal">
+ <div class="palbox">
+  <div class="palin"><span style="color:var(--tx3)">⌕</span><input id="palq" placeholder="Search by name, industry, trigger, capability…" autocomplete="off"><s>ESC</s></div>
+  <div class="pallist" id="pallist"></div>
+ </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================================
+   NETCORE USE CASE REPOSITORY — engine
+   Everything below is generic. Use cases live in the UC array at the bottom:
+   to add one, copy an object and change the data. No markup required.
+   ========================================================================== */
+
+const STAGES = ['Acquire','Onboard','Engage','Convert','Retain','Support'];
+const STAGEDESC = {
+ Acquire:'Get a new customer into a conversation',
+ Onboard:'First value, fast',
+ Engage:'Stay relevant between purchases',
+ Convert:'Turn intent into revenue',
+ Retain:'Keep them paying and coming back',
+ Support:'Resolve without a call centre'
+};
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- message primitives ------------------------------------------ */
+const tick = out => `<span class="t">12:30${out?' <i>&#10004;&#10004;</i>':''}</span>`;
+
+function rowsHTML(rows){
+ return `<div class="osheet">`+rows.map(r=>{
+  if(r[0]==='—') return `<div class="r tot"><span>${r[1]}</span><span>${r[2]}</span></div>`;
+  return `<div class="r"><s>${r[0]}</s><span class="${r[2]==='ok'?'ok':''}">${r[1]}</span></div>`;
+ }).join('')+`</div>`;
+}
+
+function btnsHTML(list, tapLabel){
+ if(!list||!list.length) return '';
+ return `<div class="btns">`+list.map(l=>`<div class="bbt${l===tapLabel?' tap':''}">${l}</div>`).join('')+`</div>`;
+}
+
+function sheetBody(items){
+ return (items||[]).map(b=>{
+  if(b.k==='lg')  return `<div class="lg">${b.t}</div>`;
+  if(b.k==='opt') return `<div class="opt${b.sel?' sel':''}"><span>${b.t}</span>${b.v?`<b>${b.v}</b>`:(b.sel?'<span>&#10004;</span>':'')}</div>`;
+  if(b.k==='inp') return `<div class="opt inp"><span>${b.t}</span></div>`;
+  if(b.k==='sz')  return `<div class="szrow">${b.items.map(s=>`<span class="sz${s===b.sel?' sel':''}">${s}</span>`).join('')}</div>`;
+  return '';
+ }).join('');
+}
+
+function msgHTML(m, tapLabel){
+ switch(m.s){
+  case 'sys': return `<div class="bsys">${m.t}</div>`;
+  case 'typ': return `<div class="typ"><i></i><i></i><i></i></div>`;
+
+  case 'in': case 'out': {
+   const img = m.img ? `<div class="bimg ${m.img}${m.tall?' tall':''}">${m.cap?`<span>${m.cap}</span>`:''}</div>` : '';
+   const body = `<div class="${m.img?'pd':'tx'}">${m.t||''}${m.rows?rowsHTML(m.rows):''}${tick(m.s==='out')}</div>`;
+   return `<div class="bb ${m.s}${m.img?' pad':''}">${img}${body}${btnsHTML(m.btns,tapLabel)}</div>`;
+  }
+
+  case 'tiles': return `<div class="pgr">`+m.items.map(p=>
+   `<div class="ptile${p.sel?' sel':''}"><div class="im ${p.g}"></div><div class="tt"><b>${p.n}</b>${p.p}</div></div>`).join('')+`</div>`;
+
+  /* native WhatsApp Flow sheet */
+  case 'flow': return `<div class="flow"><div class="fh"><b>${m.title}</b><i>&#10005;</i></div>
+    <div class="fb">${sheetBody(m.body)}</div>
+    <div class="ff${m.cta===tapLabel?' tap':''}">${m.cta}</div></div>`;
+
+  /* RCS webview — the brand's own web page, rendered inside Messages */
+  case 'webview': return `<div class="flow wv">
+    <div class="ub"><i>&#128274;</i><s>${m.site}</s><i>&#10005;</i></div>
+    <div class="fh"><b>${m.title}</b><i>&#8942;</i></div>
+    <div class="fb">${sheetBody(m.body)}</div>
+    <div class="ff${m.cta===tapLabel?' tap':''}">${m.cta}</div>
+    <div class="wvn">${m.note||'In-app webview \u00b7 the customer never leaves Messages'}</div></div>`;
+
+  /* Google Search result with a Message action — the RCS acquisition surface */
+  case 'search': return `<div class="gsr">
+    <div class="gl"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></div>
+    <div class="sb"><i>&#9906;</i><span>${m.q}</span></div>
+    <div class="biz"><div class="im ${m.g||'g1'}"></div>
+     <div class="bd"><b>${m.brand}</b><s>${m.sub}</s>
+      <div class="rt"><em>&#9733;&#9733;&#9733;&#9733;&#9733;</em> ${m.rating||'4.6'} &middot; ${m.meta||'Jewellery store'}</div></div>
+     <div class="acts">${(m.acts||[]).map(a=>`<div class="ga${a===tapLabel?' tap':''}">${a}</div>`).join('')}</div></div>
+    <div class="hint2">${m.hint||'RCS ENTRY POINT'}</div></div>`;
+
+  case 'rcard': return `<div class="rcard2">${m.img?`<div class="im ${m.img}">${m.cap?`<span>${m.cap}</span>`:''}</div>`:''}
+    <div class="bd"><b>${m.title}</b><p>${m.t}</p></div>
+    ${(m.acts||[]).map(a=>`<div class="ract${a===tapLabel?' tap':''}">${a}</div>`).join('')}</div>`;
+
+  case 'carousel': {
+   /* carousel cards often share an action label ("View") — only the first one
+      should glow, otherwise the whole strip looks tappable at once */
+   let used = false;
+   return `<div class="rcar">`+m.cards.map(c=>
+    `<div class="rcard2"><div class="im ${c.g}">${c.cap?`<span>${c.cap}</span>`:''}</div>
+      <div class="bd"><b>${c.n}</b><p>${c.t}</p></div>
+      ${(c.acts||[]).map(a=>{
+        const hit = a===tapLabel && !used; if(hit) used = true;
+        return `<div class="ract${hit?' tap':''}">${a}</div>`;
+      }).join('')}</div>`).join('')+`</div>`;
+  }
+
+  case 'chips': return `<div class="chips">`+m.items.map(c=>
+   `<span class="chipbtn${c===tapLabel?' tap':''}">${c}</span>`).join('')+`</div>`;
+
+  /* full-bleed incoming-call screen that takes over the phone */
+  case 'call': return `<div class="callsc" style="position:absolute;inset:0;width:auto;border-radius:0;justify-content:center;animation:pop .34s both">
+    <div class="av">${m.ini||'N'}</div><div class="nm">${m.brand}</div>
+    <div class="vf">&#10003; Verified Business</div><div class="st">${m.st||'Incoming WhatsApp Call'}</div>
+    <div class="rr"><span class="cb red">&#10005;</span><span class="cb grn">&#128222;</span></div></div>`;
+ }
+ return '';
+}
+
+/* ---------- phone shell -------------------------------------------------- */
+function phoneHTML(uc, ch, bodyInner, fullInner){
+ const wa = ch==='wa';
+ const sub = wa ? 'Business Account' : 'Verified business';
+ return `<div class="dev ${ch}">
+  <div class="dsb"><span>12:30</span><span class="r">&#9650; &#9646; &#9648;</span></div>
+  <div class="dhd"><span class="bk">&#8592;</span><span class="av">${uc.ini}</span>
+   <span class="tt"><span class="nm">${uc.brand} <i class="vchk">&#10004;</i></span><span class="sb">${sub}</span></span>
+   <span class="ico">${wa?'&#128222; &#8942;':'&#128247; &#8942;'}</span></div>
+  <div class="dbody">${bodyInner}</div>
+  <div class="din"><span class="fld">${wa?'Message':'RCS message'} <em>${wa?'&#128206; &#128247;':'&#128512; &#128206;'}</em></span><span class="mic">&#127908;</span></div>
+  <div class="dnav">&#9664; &nbsp; &#9679; &nbsp; &#9635;</div>
+  ${fullInner ? `<div class="devfull">${fullInner}</div>` : ''}
+ </div>`;
+}
+
+/* Render the screen at step k as three layers:
+   stack — scrollable chat history
+   sheet — bottom-pinned sheets (WhatsApp Flow, RCS webview) inside the chat area
+   full  — surfaces that take over the whole handset (incoming call, Google Search) */
+const SHEETS = {flow:1, webview:1};
+const FULLS  = {call:1, search:1};
+function screenAt(uc, ch, k, animate, noTap){
+ const steps = uc[ch]||[]; let stack='', sheet='', full='';
+ for(let i=0;i<=k && i<steps.length;i++){
+  const st = steps[i], tap = (i===k && !noTap) ? st.tap : null;
+  (st.msgs||[]).forEach(m=>{
+   const transient = SHEETS[m.s] || FULLS[m.s] || m.keep===false;
+   if(i<k && transient) return;              // overlays belong to their own step only
+   const h = msgHTML(m, tap);
+   if(SHEETS[m.s])      sheet += h;
+   else if(FULLS[m.s])  full  += h;
+   else stack += (animate && i===k) ? h.replace(/^<div class="/,'<div class="nw ') : h;
+  });
+ }
+ return {inner:`<div class="dstack">${stack}</div>${sheet}`, full};
+}
+
+/* ---------- step player -------------------------------------------------- */
+function mountPlayer(host, uc, ch){
+ host.innerHTML = `<div class="steplab"></div>${phoneHTML(uc,ch,'')}<div class="dots"></div>`;
+ const steps = uc[ch]||[];
+ const lab = host.querySelector('.steplab'),
+       dev = host.querySelector('.dev'),
+       body = host.querySelector('.dbody'),
+       dots = host.querySelector('.dots');
+ let k = 0, timer = null, dead = false;
+
+ dots.innerHTML = steps.map((s,i)=>`<i data-i="${i}"></i>`).join('');
+
+ function draw(anim){
+  const scr = screenAt(uc, ch, k, anim!==false);
+  body.innerHTML = scr.inner;
+  const sc = body.querySelector('.dstack');
+  if(sc) sc.scrollTop = sc.scrollHeight;      // newest message always visible
+  const old = dev.querySelector('.devfull'); if(old) old.remove();
+  if(scr.full) dev.insertAdjacentHTML('beforeend', `<div class="devfull">${scr.full}</div>`);
+  lab.textContent = steps[k] ? (steps[k].lab||'') : '';
+  dots.querySelectorAll('i').forEach(d=>{
+   const i=+d.dataset.i; d.className = i===k ? 'on' : (i<k ? 'done' : '');
+  });
+  clearTimeout(timer);
+  if(dead) return;
+  if(steps[k] && steps[k].tap) return;            // wait for the human to tap
+  if(k < steps.length-1) timer = setTimeout(()=>{k++;draw()}, (steps[k]&&steps[k].ms)||1600);
+ }
+ dev.addEventListener('click', e=>{
+  if(e.target.closest('.tap') && k < steps.length-1){ k++; draw() }
+ });
+ dots.addEventListener('click', e=>{
+  const d=e.target.closest('i'); if(!d) return; k=+d.dataset.i; draw();
+ });
+ draw();
+ return {
+  replay(){ k=0; draw() },
+  next(){ if(k<steps.length-1){k++;draw()} },
+  end(){ k=steps.length-1; draw() },
+  stop(){ dead=true; clearTimeout(timer) }
+ };
+}
+
+/* static thumbnail: no animation, no glowing buttons, no interaction.
+   Defaults to the final step; set `thumbAt` on a use case to pick another. */
+function thumbHTML(uc){
+ const ch = (uc.wa&&uc.wa.length) ? 'wa' : 'rcs';
+ const steps = uc[ch]||[];
+ const k = (typeof uc.thumbAt==='number') ? uc.thumbAt : Math.max(0,steps.length-1);
+ const scr = screenAt(uc, ch, k, false, true);
+ return phoneHTML(uc, ch, scr.inner, scr.full);
+}
+</script>
+
+<script>
+/* ==========================================================================
+   USE CASE DATA
+   To add a use case: copy any object below and edit the fields.
+   Steps are screen states. `tap` = the label the customer taps to advance.
+   `rcsNA` / `waNA` = honest note for a channel that genuinely cannot do this;
+   set that channel to null alongside. `status` flags a capability not yet GA.
+   Proof marked PH = needs a sourced number before this goes to customers.
+   ========================================================================== */
+const PH = '__PLACEHOLDER__';
+
+const UC = [
+
+/* ================================ RETAIL / D2C ========================== */
+{
+ id:'gsearch-rcs', name:'Google Search → RCS Conversation',
+ one:'Someone searches for your product, taps Message on your listing, and lands in your RCS bot with their intent already declared.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail','BFSI'], stage:'Acquire', cat:'Marketing', effort:'Standard',
+ status:'In development', thumbAt:0,
+ trigger:'Customer taps "Message" on the brand listing in Google Search',
+ caps:['Google Search Entry','RCS Chatbot','RCS Webview','Audience Agent'],
+ prereq:['Verified RBM agent live','Google Search entry point enabled for the brand','Bot intents mapped to catalogue, store and pricing data'],
+ verdict:{ pick:'RCS',
+  wa:'No equivalent surface. A click-to-WhatsApp button on your website only works once someone has already arrived; this fires while they are still on the results page deciding.',
+  rcs:'The one acquisition surface RCS has that WhatsApp does not. Search intent is the highest-quality intent there is, and the conversation opens from a verified sender with your logo on it.' },
+ waNA:'Google Search does not offer a click-to-WhatsApp action on a brand listing. WhatsApp acquires from paid social instead — see "Click-to-WhatsApp Ad → Qualified Lead".',
+ proof:null,
+ talk:['Lead with where the customer is standing: mid-search, comparing, not yet on anybody\'s website. Every other channel needs them to arrive somewhere first.',
+  'Be straight that this is in development. Sell it as roadmap and early access, and check the current status with product before you commit to a date — a missed date here costs more than the deal.',
+  'The pairing is the real pitch: Click-to-WhatsApp captures paid social intent, Google Search captures organic search intent. Together they cover both halves of demand, and both land in the same customer profile.'],
+ obj:{q:'"We already rank on Google and we have a website. Why add a chat?"',
+  a:'Because ranking earns you a click and, most of the time, a bounce. A Message action earns you a conversation, a phone number and a stated need — and it serves the searcher who wants a price or a store timing, not a browsing session. It does not replace the site; it catches the intent the site loses.'},
+ tpl:`Hi 👋 Thanks for reaching out to <v>{{brand}}</v>.\nWhat brought you here today?\n\n[Check a price] [Find a store] [Talk to a stylist]`,
+ wa:null,
+ rcs:[
+  {lab:'Customer is mid-search, on nobody\'s site', tap:'Message', msgs:[
+   {s:'search',q:'kundan bridal set price',brand:'Aurelia Jewels',sub:'aurelia.com · Bandra West, Mumbai',g:'g1',
+    rating:'4.6',meta:'Jewellery store · Open until 9 PM',acts:['Message','Call','Directions'],
+    hint:'GOOGLE SEARCH → RCS ENTRY POINT'}]},
+  {lab:'Verified brand, conversation opens', tap:'Check a price', msgs:[
+   {s:'sys',t:'Conversation started from Google Search'},
+   {s:'in',t:'Hi 👋 Thanks for reaching out to Aurelia.<br>What brought you here today?'},
+   {s:'chips',items:['Check a price','Find a store','Talk to a stylist']}]},
+  {lab:'Bot answers from live catalogue data', tap:'View', msgs:[
+   {s:'out',t:'Check a price'},
+   {s:'in',t:'Kundan bridal sets start at ₹68,900. Three in stock near you 👇'},
+   {s:'carousel',cards:[
+    {n:'Kundan Set',t:'₹68,900 · 22K gold',g:'g1',cap:'IN STOCK',acts:['View']},
+    {n:'Polki Haar',t:'₹1,24,000 · Uncut',g:'g6',cap:'IN STOCK',acts:['View']},
+    {n:'Temple Set',t:'₹92,500 · Antique',g:'g5',cap:'2 LEFT',acts:['View']}]}]},
+  {lab:'Booking completes in the webview', tap:'Book appointment', msgs:[
+   {s:'webview',site:'aurelia.com/book',title:'Book a viewing',cta:'Book appointment',body:[
+    {k:'lg',t:'Store'},{k:'opt',t:'Bandra West · 2.1 km away',sel:1},
+    {k:'lg',t:'Day'},{k:'opt',t:'Saturday, 22 Aug'},{k:'opt',t:'Sunday, 23 Aug',sel:1},
+    {k:'lg',t:'Time'},{k:'sz',items:['11 AM','1 PM','4 PM','6 PM'],sel:'4 PM'}]}]},
+  {lab:'A lead built out of search intent', msgs:[
+   {s:'in',t:'<b>Booked ✓</b><br>Sunday 23 Aug, 4 PM · Aurelia Bandra West. We will keep all three sets aside for you.'},
+   {s:'sys',t:'Lead created · Kundan bridal · ₹68k–1.24L · Source: Google Search → RCS'}]}
+ ]
+},
+
+{
+ id:'ctwa-lead', name:'Click-to-WhatsApp Ad → Qualified Lead',
+ one:'Turn ad spend into a live conversation instead of a landing page bounce. The customer qualifies themselves in two taps.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Acquire', cat:'Marketing', effort:'Quick win',
+ trigger:'Customer taps a Click-to-WhatsApp ad on Instagram or Facebook',
+ caps:['Click-to-WhatsApp Ads','Journeys','Audience Agent'],
+ prereq:['Meta Ads account linked to the WABA','Welcome journey published'],
+ verdict:{ pick:'WhatsApp',
+  wa:'The only channel with a native paid-ad entry point. Ad click opens the thread, and the customer is opted in from the first message.',
+  rcs:'No paid-ad entry point exists. RCS acquisition starts from Google Search instead, which is a different moment in the funnel — organic intent rather than interruption.' },
+ rcsNA:'Meta ads can only open WhatsApp or Messenger, so there is no click-to-RCS ad format. RCS acquires from a different surface entirely — see "Google Search → RCS Conversation" in this repository.',
+ proof:null,
+ talk:['Ask what happens today after someone clicks their Instagram ad. The answer is almost always a form on a landing page with a 2-4% completion rate.',
+  'The pitch is not "WhatsApp ads". It is "your ad now ends in a conversation you own, with a phone number and a consent record attached."',
+  'Land the compounding point: every ad click becomes an addressable contact you can reach later with cheap utility messages — on WhatsApp or, once you have the number, on RCS.'],
+ obj:{q:'"Our agency already runs lead-gen forms and they work fine."',
+  a:'Keep them. Run CTWA as a parallel ad set for two weeks and compare cost per qualified lead, not cost per lead. Forms win on volume; conversations win on quality, because a customer who answers two questions has told you their budget and intent before a human ever calls.'},
+ tpl:`Hi <v>{{first_name}}</v> 👋 Welcome to <v>{{brand}}</v>.\nWhich collection are you shopping for today?\n\n[Bridal] [Everyday gold] [Just browsing]`,
+ wa:[
+  {lab:'Customer taps the ad', tap:'Bridal', msgs:[
+   {s:'sys',t:'Opened from Instagram ad · Festive Bridal'},
+   {s:'in',t:'Hi 👋 Welcome to Aurelia.<br>Which collection are you shopping for today?',btns:['Bridal','Everyday gold','Just browsing']}]},
+  {lab:'Self-qualifying, no form', tap:'₹50k – ₹1.5L', msgs:[
+   {s:'out',t:'Bridal'},
+   {s:'in',t:'Lovely choice ✨ What budget range should we work within?',btns:['Under ₹50k','₹50k – ₹1.5L','Above ₹1.5L']}]},
+  {lab:'Qualified in two taps', ms:2000, msgs:[
+   {s:'out',t:'₹50k – ₹1.5L'},
+   {s:'in',t:'Here are three bridal sets in that range 👇'},
+   {s:'tiles',items:[{n:'Kundan Set',p:'₹68,900',g:'g1'},{n:'Polki Haar',p:'₹1,24,000',g:'g6',sel:1},{n:'Temple Set',p:'₹92,500',g:'g7'}]}]},
+  {lab:'Lead lands in the CRM, enriched', msgs:[
+   {s:'in',t:'Want our stylist to walk you through these on a call?',btns:['Yes, call me','Keep browsing']},
+   {s:'sys',t:'Lead created · Bridal · ₹50k–1.5L · Source: IG Ad'}]}
+ ],
+ rcs:null
+},
+
+{
+ id:'welcome-pref', name:'Welcome & Preference Capture',
+ one:'Use the highest-attention moment you will ever get — the first message — to collect the data that makes every later message relevant.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail','BFSI'], stage:'Onboard', cat:'Utility', effort:'Quick win',
+ trigger:'New opt-in: signup, first purchase, or CTWA lead created',
+ caps:['WhatsApp Flows','RCS Webview','Journeys','Customer Profile'],
+ prereq:['Opt-in captured','Profile attributes defined in Netcore'],
+ verdict:{ pick:'Either',
+  wa:'A native Flow is a real multi-field form inside the thread, and the answers come back as a structured payload straight onto the customer profile.',
+  rcs:'Chips are quick for one or two questions; for a full preference set the webview renders your existing preference centre inside Messages and posts back to the profile the same way your site does.' },
+ proof:null,
+ talk:['Frame this as the cheapest first-party data collection they will ever run — no media spend, no landing page, ~60-70% completion because it never leaves the chat.',
+  'Point out what it unlocks downstream: every use case in this repository gets better when you know category, size, and budget.',
+  'This is the use case to lead with for a nervous buyer. It is one journey, one Flow, live in a week, and it makes the next five use cases work.'],
+ obj:{q:'"We already collect preferences at signup on our website."',
+  a:'How many people finish it? Web preference centres run in the single digits because they are a separate page a customer has no reason to visit. This sits inside a message they already opened, and it takes four taps.'},
+ tpl:`Welcome to <v>{{brand}}</v>, <v>{{first_name}}</v> 🎉\nTell us what you love and we will only send you things worth opening.\n\n[Set my preferences]`,
+ wa:[
+  {lab:'Welcome moment', tap:'Set my preferences', msgs:[
+   {s:'in',img:'g1',cap:'AURELIA · NEW HERE',t:'Welcome to Aurelia, Priya 🎉<br>Tell us what you love and we will only send you things worth opening.',btns:['Set my preferences','Maybe later']}]},
+  {lab:'WhatsApp Flow opens in-thread', tap:'Save preferences', msgs:[
+   {s:'flow',title:'Your preferences',cta:'Save preferences',body:[
+    {k:'lg',t:'Categories you shop'},
+    {k:'opt',t:'Gold jewellery',sel:1},{k:'opt',t:'Diamonds',sel:1},{k:'opt',t:'Silver'},
+    {k:'lg',t:'Budget band'},{k:'opt',t:'Typical spend',v:'₹50k–1.5L'},
+    {k:'lg',t:'How often should we message?'},{k:'opt',t:'Frequency',v:'Twice a month'}]}]},
+  {lab:'Answers write to the profile', msgs:[
+   {s:'sys',t:'Preferences saved to customer profile'},
+   {s:'in',t:'Perfect — noted 🙌<br>You will hear from us twice a month, gold and diamonds only.',btns:['See what is new']}]},
+  {lab:'First relevant message, immediately', msgs:[
+   {s:'in',img:'g6',cap:'PICKED FOR YOU',t:'Because you love gold: three new pieces from the festive edit.',btns:['View collection']}]}
+ ],
+ rcs:[
+  {lab:'Rich card welcome', tap:'Set preferences', msgs:[
+   {s:'rcard',img:'g1',cap:'AURELIA',title:'Welcome to Aurelia 🎉',t:'Tell us what you love and we will only send things worth opening.',acts:['Set preferences','Maybe later']}]},
+  {lab:'Preference centre in the webview', tap:'Save preferences', msgs:[
+   {s:'webview',site:'aurelia.com/preferences',title:'Your preferences',cta:'Save preferences',body:[
+    {k:'lg',t:'Categories you shop'},{k:'opt',t:'Gold jewellery',sel:1},{k:'opt',t:'Diamonds',sel:1},{k:'opt',t:'Silver'},
+    {k:'lg',t:'Budget band'},{k:'opt',t:'Typical spend',v:'₹50k–1.5L'},
+    {k:'lg',t:'Message me'},{k:'opt',t:'Frequency',v:'Twice a month'}]}]},
+  {lab:'Written back to the profile', msgs:[
+   {s:'sys',t:'Preferences saved to customer profile'},
+   {s:'in',t:'Perfect — noted 🙌 Gold and diamonds, twice a month.'}]},
+  {lab:'First relevant message, immediately', msgs:[
+   {s:'rcard',img:'g6',cap:'PICKED FOR YOU',title:'Three new pieces in gold',t:'From the festive edit, because that is what you love.',acts:['View collection']}]}
+ ]
+},
+
+{
+ id:'catalog-drop', name:'New Collection / Catalogue Drop',
+ one:'Launch a collection to a segment that already told you they want it, with the products browsable inside the message.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Engage', cat:'Marketing', effort:'Quick win',
+ trigger:'Manual campaign or product-feed event: new collection published',
+ caps:['Catalogue','Audience Agent','Content Agent','Scheduler Agent'],
+ prereq:['Product catalogue synced to Meta / RBM','Marketing opt-in'],
+ verdict:{ pick:'RCS',
+  wa:'Product tiles pull live price and stock from the synced catalogue, and the customer can go from browse to paid in the same thread.',
+  rcs:'The carousel is the better shop window — bigger images, swipeable, more of the range visible before a tap. Best for discovery, then hand to WhatsApp to transact.' },
+ proof:{n:'650%', l:'ROI on WhatsApp marketing campaigns', who:'Crocs'},
+ talk:['Anchor on the alternative: a promotional email at 20% open rate versus a message at 90%+ read rate with the products inside it.',
+  'The carousel is the demo moment. Swipe it on the call — most buyers have never seen their own catalogue rendered as an RCS carousel.',
+  'Close on the Crocs number, then immediately say what drove it: sending less to the right segment, not more to everyone.'],
+ obj:{q:'"Won\'t we burn our list and get blocked?"',
+  a:'That is a real risk and it is exactly why we lead with Audience Agent. Quality rating drops when you broadcast to people with no affinity. Send the festive edit to the 40k who browsed jewellery, not the 400k on your list — cheaper, and the rating holds.'},
+ tpl:`<v>{{first_name}}</v>, the <v>{{collection_name}}</v> is here ✨\nHand-picked pieces in <v>{{category}}</v> — your usual.\n\n[View collection] [Book a store visit]`,
+ wa:[
+  {lab:'Campaign lands', tap:'View collection', msgs:[
+   {s:'sys',t:'Sent 9:30 AM · Priya\'s peak engagement window'},
+   {s:'in',img:'g1',tall:1,cap:'THE FESTIVE EDIT',t:'The Festive Edit is here ✨<br>Hand-picked gold, because that is what you love.',btns:['View collection','Book a store visit']}]},
+  {lab:'Catalogue opens in the thread', tap:'Kundan Set · ₹68,900', msgs:[
+   {s:'out',t:'View collection'},
+   {s:'in',t:'Twelve new pieces. Here are the three we think are you 👇'},
+   {s:'tiles',items:[{n:'Kundan Set',p:'₹68,900',g:'g1',sel:1},{n:'Jhumkas',p:'₹24,400',g:'g7'},{n:'Polki Haar',p:'₹1,24,000',g:'g6'}]},
+   {s:'in',t:'Tap a piece to see it up close.',btns:['Kundan Set · ₹68,900','See all 12']}]},
+  {lab:'Browse becomes intent', msgs:[
+   {s:'in',img:'g1',cap:'KUNDAN SET · 22K',t:'<b>Kundan Bridal Set</b><br>₹68,900 · In stock at 4 stores',btns:['Add to cart','Try in store']}]}
+ ],
+ rcs:[
+  {lab:'Carousel as the shop window', tap:'View', msgs:[
+   {s:'in',t:'The Festive Edit is here ✨ Swipe to see the picks in gold.'},
+   {s:'carousel',cards:[
+    {n:'Kundan Set',t:'₹68,900 · 22K gold',g:'g1',cap:'BRIDAL',acts:['View']},
+    {n:'Polki Haar',t:'₹1,24,000 · Uncut',g:'g6',cap:'HERITAGE',acts:['View']},
+    {n:'Jhumkas',t:'₹24,400 · Everyday',g:'g7',cap:'DAILY',acts:['View']},
+    {n:'Temple Set',t:'₹92,500 · Antique',g:'g5',cap:'FESTIVE',acts:['View']}]}]},
+  {lab:'Rich card detail', tap:'Find in store', msgs:[
+   {s:'rcard',img:'g1',cap:'KUNDAN BRIDAL SET',title:'Kundan Bridal Set · ₹68,900',t:'22K gold, uncut kundan. In stock at 4 stores near you.',acts:['Buy on WhatsApp','Find in store']}]},
+  {lab:'Drive to store', msgs:[
+   {s:'in',t:'Aurelia · Bandra West is 2.1 km away. Open until 9 PM.'},
+   {s:'chips',items:['Get directions','Book an appointment','Call the store']}]}
+ ]
+},
+
+{
+ id:'cart-recovery', name:'Abandoned Cart Recovery',
+ one:'Bring back the customer who filled a cart and left — and let them finish paying inside the conversation, on either channel.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Convert', cat:'Marketing', effort:'Standard',
+ trigger:'cart_abandoned event + 60 minutes, no purchase_completed',
+ caps:['Journeys','Catalogue','WhatsApp Payments','RCS Webview','Fallback on Channels'],
+ prereq:['Cart events streaming into Netcore','Payment provider on the WABA, or a mobile-ready checkout page for the webview'],
+ verdict:{ pick:'Either',
+  wa:'Payment is native and in-thread — there is no web page anywhere in the journey — and it reaches iOS as well as Android. The shortest possible path from reminder to paid.',
+  rcs:'The rich card recovers attention and the webview opens your existing checkout inside Messages, so nothing switches apps. You reuse the checkout you already have instead of integrating payments into the channel.' },
+ proof:{n:'2X', l:'increase in conversions across WhatsApp + RCS journeys', who:'Senco Gold & Diamonds'},
+ talk:['Get their current cart recovery number first. Email cart recovery typically sits in the low single digits; anchor everything against that.',
+  'The differentiator is not the reminder, it is the payment. Every other channel recovers attention and then hands the customer back to a checkout page that already failed once.',
+  'Ask what their average order value is, multiply by their monthly abandoned carts, and take 5% of it. That is the business case in one line.'],
+ obj:{q:'"Is it not intrusive to message someone about their cart?"',
+  a:'It is, if you send three of them. One message inside the utility window, with the item and a way to finish, reads as service — the same as a delivery update. We cap frequency in the journey so a customer cannot receive more than one cart nudge per cycle.'},
+ tpl:`Still thinking about the <v>{{product_name}}</v>, <v>{{first_name}}</v>?\nIt is still in your bag — and still in stock.\n\n[Complete order] [Not right now]`,
+ wa:[
+  {lab:'Cart abandoned 60 minutes ago', tap:'Complete order', msgs:[
+   {s:'sys',t:'Journey triggered · cart_abandoned + 60 min'},
+   {s:'in',img:'g2',cap:'IVORY SILK SAREE',t:'Still thinking about it, Priya?<br>The Ivory Silk Saree is still in your bag.',
+    rows:[['Ivory Silk Saree','₹8,499'],['Size','Free size'],['—','Total','₹8,499']],btns:['Complete order','Not right now']}]},
+  {lab:'Checkout, still in the thread', tap:'Pay ₹8,499', msgs:[
+   {s:'out',t:'Complete order'},
+   {s:'in',t:'Confirm and pay 👇',rows:[['Ivory Silk Saree','₹8,499'],['Delivery','Free','ok'],['—','Total','₹8,499']],btns:['Pay ₹8,499','Change address']}]},
+  {lab:'Paid without leaving WhatsApp', msgs:[
+   {s:'sys',t:'UPI · payment authorised'},
+   {s:'in',t:'<b>Payment successful ✓</b><br>Order #48291 confirmed. Arriving Friday.',btns:['Track order']}]},
+  {lab:'And if she had never opened it', msgs:[
+   {s:'sys',t:'Not read in 24h → automatic fallback to SMS + app push'},
+   {s:'in',t:'Netcore journeys retry on the next best channel, so the recovery does not die with one unread message.'}]}
+ ],
+ rcs:[
+  {lab:'Rich card recovery', tap:'Complete order', msgs:[
+   {s:'rcard',img:'g2',cap:'STILL IN YOUR BAG',title:'Ivory Silk Saree · ₹8,499',t:'Still in your bag and still in stock. Free delivery on this order.',acts:['Complete order','Remove from bag']}]},
+  {lab:'Webview checkout opens inside Messages', tap:'Pay ₹8,499', msgs:[
+   {s:'out',t:'Complete order'},
+   {s:'webview',site:'aurelia.com/checkout',title:'Checkout',cta:'Pay ₹8,499',body:[
+    {k:'lg',t:'Your bag'},{k:'opt',t:'Ivory Silk Saree · Free size',v:'₹8,499'},
+    {k:'lg',t:'Deliver to'},{k:'opt',t:'Home · Bandra West 400050',sel:1},
+    {k:'lg',t:'Pay with'},{k:'opt',t:'UPI · GPay',sel:1}]}]},
+  {lab:'Paid without ever leaving the app', msgs:[
+   {s:'in',t:'<b>Payment successful ✓</b><br>Order #48291 confirmed. Arriving Friday.'},
+   {s:'chips',items:['Track order','Share with a friend']}]}
+ ]
+},
+
+{
+ id:'cod-confirm', name:'COD Confirmation & Prepaid Nudge',
+ one:'Confirm every cash-on-delivery order before it ships, and offer a small incentive to convert it to prepaid. The cheapest RTO fix there is.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Convert', cat:'Utility', effort:'Quick win',
+ trigger:'order_placed where payment_method = COD',
+ caps:['Direct Send API','WhatsApp Payments','RCS Webview','Journeys'],
+ prereq:['Order events streaming into Netcore','Prepaid discount rule agreed with finance'],
+ verdict:{ pick:'Either',
+  wa:'Utility category, so it is cheap at volume — and the prepaid switch is paid natively in-thread, on iOS as well as Android.',
+  rcs:'Often the cheapest confirmation you can send to a large Android base, and the prepaid switch completes in a webview without leaving Messages. The RTO saving is available on both channels.' },
+ proof:null,
+ talk:['This is the use case that pays for the whole contract in retail. Ask for their RTO rate — anything above 15% and the arithmetic sells itself.',
+  'Two wins in one message: unconfirmed orders never ship, and a slice of confirmed ones convert to prepaid at a 2-3% discount.',
+  'It is a utility message, so it is one of the cheapest things they will send, and it needs no marketing opt-in.'],
+ obj:{q:'"Will asking for confirmation make people cancel orders they would have accepted?"',
+  a:'Some will cancel — and those are the parcels you did not want to ship. A cancellation costs you nothing; a return trip costs you forward freight, reverse freight, and handling. Run it on one pincode cluster for a fortnight and compare total logistics cost, not order count.'},
+ tpl:`Hi <v>{{first_name}}</v>, please confirm your COD order <v>{{order_id}}</v> so we can ship it today.\n\n<v>{{product_name}}</v> · <v>{{amount}}</v>\n\n[Confirm order] [Cancel] [Pay now & save 3%]`,
+ wa:[
+  {lab:'Order placed, not yet shipped', tap:'Pay now & save 3%', msgs:[
+   {s:'in',t:'Hi Priya, please confirm your COD order so we can ship today.',
+    rows:[['Order','#48291'],['Kundan Jhumkas','₹24,400'],['—','Pay on delivery','₹24,400']],
+    btns:['Confirm order','Cancel order','Pay now & save 3%']}]},
+  {lab:'The prepaid nudge does the work', tap:'Pay ₹23,668', msgs:[
+   {s:'out',t:'Pay now & save 3%'},
+   {s:'in',t:'Nice — 3% off for prepaying 🎉',rows:[['Kundan Jhumkas','₹24,400'],['Prepaid discount','− ₹732','ok'],['—','Total','₹23,668']],btns:['Pay ₹23,668']}]},
+  {lab:'COD order became prepaid', msgs:[
+   {s:'sys',t:'UPI · payment authorised'},
+   {s:'in',t:'<b>Paid ✓</b> Order #48291 ships today.',btns:['Track order']},
+   {s:'sys',t:'RTO risk removed · ₹732 discount vs ~₹340 return cost'}]}
+ ],
+ rcs:[
+  {lab:'Confirmation card', tap:'Confirm order', msgs:[
+   {s:'rcard',title:'Confirm order #48291',t:'Kundan Jhumkas · ₹24,400 · Cash on delivery. Confirm so we can ship today.',acts:['Confirm order','Cancel order']}]},
+  {lab:'Confirmed — now nudge to prepaid', tap:'Pay online & save 3%', msgs:[
+   {s:'out',t:'Confirm order'},
+   {s:'in',t:'Thanks Priya — #48291 ships today 🚚'},
+   {s:'chips',items:['Pay online & save 3%','Track order']}]},
+  {lab:'Prepaid switch in the webview', tap:'Pay ₹23,668', msgs:[
+   {s:'out',t:'Pay online & save 3%'},
+   {s:'webview',site:'aurelia.com/pay',title:'Prepay order #48291',cta:'Pay ₹23,668',body:[
+    {k:'lg',t:'Order'},{k:'opt',t:'Kundan Jhumkas',v:'₹24,400'},
+    {k:'lg',t:'Discount'},{k:'opt',t:'Prepaid 3%',v:'− ₹732'},
+    {k:'lg',t:'Payable'},{k:'opt',t:'Total',v:'₹23,668'}]}]},
+  {lab:'COD order became prepaid', msgs:[
+   {s:'in',t:'<b>Paid ✓</b> Order #48291 ships today.'},
+   {s:'sys',t:'RTO risk removed · ₹732 discount vs ~₹340 return cost'}]}
+ ]
+},
+
+{
+ id:'wa-checkout', name:'End-to-End Commerce in the Thread',
+ one:'Discover, choose, pay and get confirmed inside one conversation. The full storefront with no website.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Convert', cat:'Marketing', effort:'Advanced',
+ trigger:'Customer message, campaign tap, or CTWA ad click',
+ caps:['Catalogue','WhatsApp Flows','WhatsApp Payments','RCS Webview','AI Chatbot'],
+ prereq:['Catalogue synced','Payment provider on the WABA, or a mobile checkout page for the webview','Order-management webhook'],
+ verdict:{ pick:'Either',
+  wa:'Browse, configure, pay and confirm with no web page anywhere in the journey — and it works on iOS. The shortest path there is.',
+  rcs:'The carousel is the better shop window, and the webview runs your live checkout inside Messages. You keep the cart logic, promo codes and payment methods your site already has instead of rebuilding them in the channel.' },
+ proof:null,
+ talk:['Do not pitch this first. It is the flagship demo, but it needs catalogue, payments and order management wired up — sell a quick win, then land this in phase two.',
+  'The strongest framing is for brands with weak app adoption: this is a storefront for the 80% of customers who will never install the app.',
+  'Watch for the moment in the demo where you tap Pay inside the phone. That is usually when the room goes quiet.'],
+ obj:{q:'"Our checkout has 40 fields and a loyalty engine. This cannot replace it."',
+  a:'It is not replacing it. It is a second, shorter checkout for repeat customers buying a known SKU — the ones who do not need 40 fields because you already have their address. Run it as an express lane for your top 20 products.'},
+ tpl:`Hi <v>{{first_name}}</v> 👋 What are you looking for today?\n\n[Browse the catalogue] [Track an order] [Talk to a stylist]`,
+ wa:[
+  {lab:'Discover', tap:'View catalogue', msgs:[
+   {s:'in',img:'g2',tall:1,cap:'SUMMER EDIT',t:'New season, new drops ✨<br>Twelve pieces just landed.',btns:['View catalogue','Talk to a stylist']}]},
+  {lab:'Browse the live catalogue', tap:'Summer Dress · ₹2,499', msgs:[
+   {s:'in',t:'Here is what is new this week 👇'},
+   {s:'tiles',items:[{n:'Linen Shirt',p:'₹1,999',g:'g3'},{n:'Summer Dress',p:'₹2,499',g:'g2',sel:1},{n:'Sneakers',p:'₹2,799',g:'g4'}]},
+   {s:'in',t:'Tap one to pick a size.',btns:['Summer Dress · ₹2,499','See all 12']}]},
+  {lab:'Configure inside a Flow', tap:'Add to cart', msgs:[
+   {s:'out',t:'Summer Dress · ₹2,499'},
+   {s:'flow',title:'Summer Dress · ₹2,499',cta:'Add to cart',body:[
+    {k:'lg',t:'Select size'},{k:'sz',items:['S','M','L','XL'],sel:'M'},
+    {k:'lg',t:'Quantity'},{k:'opt',t:'Quantity',v:'1'},
+    {k:'lg',t:'Deliver to'},{k:'opt',t:'Home · 400050',sel:1}]}]},
+  {lab:'Pay', tap:'Pay ₹2,499', msgs:[
+   {s:'in',t:'Your order 👇',rows:[['Summer Dress · M','₹2,499'],['Delivery','Free','ok'],['—','Total','₹2,499']],btns:['Pay ₹2,499','Change address']}]},
+  {lab:'Confirmed — one thread, start to finish', msgs:[
+   {s:'sys',t:'UPI · payment authorised'},
+   {s:'in',t:'<b style="color:#0E8A49">✓ Order confirmed</b><br>#48291 · Summer Dress · M<br>Arriving Friday, 22 Aug',btns:['Track order']},
+   {s:'in',t:'We will keep you updated right here 🙌'}]}
+ ],
+ rcs:[
+  {lab:'Discovery is where RCS shines', tap:'Buy now', msgs:[
+   {s:'in',t:'New season drops ✨ Swipe through the summer edit.'},
+   {s:'carousel',cards:[
+    {n:'Linen Shirt',t:'₹1,999',g:'g3',acts:['Buy now']},
+    {n:'Summer Dress',t:'₹2,499',g:'g2',acts:['Buy now']},
+    {n:'Sneakers',t:'₹2,799',g:'g4',acts:['Buy now']}]}]},
+  {lab:'Your real checkout, inside Messages', tap:'Pay ₹2,249', msgs:[
+   {s:'out',t:'Buy now'},
+   {s:'webview',site:'shop.aurelia.com',title:'Summer Dress · ₹2,499',cta:'Pay ₹2,249',body:[
+    {k:'lg',t:'Size'},{k:'sz',items:['S','M','L','XL'],sel:'M'},
+    {k:'lg',t:'Quantity'},{k:'opt',t:'Quantity',v:'1'},
+    {k:'lg',t:'Promo code'},{k:'inp',t:'SUMMER10 applied · − ₹250'},
+    {k:'lg',t:'Payable'},{k:'opt',t:'Total',v:'₹2,249'}],
+    note:'Your existing checkout · cart, promos and payment logic intact'}]},
+  {lab:'Confirmed back in the thread', msgs:[
+   {s:'in',t:'<b>Order confirmed ✓</b><br>#48291 · Summer Dress · M · Arriving Friday'},
+   {s:'chips',items:['Track order','Shop more']}]}
+ ]
+},
+
+{
+ id:'order-track', name:'Order Tracking & Delivery Self-Serve',
+ one:'Replace the "where is my order" ticket with a thread that updates itself and lets the customer reschedule without an agent.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Support', cat:'Utility', effort:'Quick win',
+ trigger:'order_shipped, out_for_delivery, delivery_failed events',
+ caps:['Direct Send API','AI Chatbot','Fallback on Channels'],
+ prereq:['Courier webhooks mapped to Netcore events'],
+ verdict:{ pick:'Either',
+  wa:'One persistent thread per customer, so every update for every order lands in a place they already check. Best when you also want two-way questions.',
+  rcs:'Cheaper per message on Android at high volume, and the rich card renders a tracking summary cleanly. Good choice for pure one-way status.' },
+ proof:null,
+ talk:['Ask what share of their support tickets are "where is my order". It is usually 40-60% for a retailer, and every one of those is a deflectable cost.',
+  'Direct Send API is the technical hook: status changes go out without waiting on template approval, so a delay message goes out when it is still useful.',
+  'The reschedule button is the part CSMs should push. Every self-served reschedule is a failed delivery that never happened.'],
+ obj:{q:'"Our courier already sends SMS updates."',
+  a:'They do, from a shortcode nobody recognises, with a link nobody taps. The difference here is it comes from your verified brand, it lands in one continuous thread with the order in it, and the customer can reply to it. SMS becomes your fallback rather than your primary.'},
+ tpl:`<v>{{first_name}}</v>, your order <v>{{order_id}}</v> is out for delivery 🚚\nArriving today by <v>{{eta}}</v>.\n\n[Track live] [Reschedule]`,
+ wa:[
+  {lab:'Shipped', ms:1400, msgs:[
+   {s:'in',t:'Order #48291 has shipped 📦<br>Arriving Friday, 22 Aug.',btns:['Track live']}]},
+  {lab:'Customer asks anyway', ms:1300, msgs:[
+   {s:'out',t:'Where has my order reached?'},
+   {s:'typ',keep:false}]},
+  {lab:'AI answers with live courier data', tap:'Reschedule delivery', msgs:[
+   {s:'in',t:'It is out for delivery right now 🚚<br>Arriving today by 7 PM. Rider: Imran.',btns:['Track live','Reschedule delivery']}]},
+  {lab:'Self-serve reschedule, no agent', tap:'6 – 8 PM', msgs:[
+   {s:'out',t:'Reschedule delivery'},
+   {s:'in',t:'Sure — pick a window that works 👇',btns:['2 – 4 PM','4 – 6 PM','6 – 8 PM']}]},
+  {lab:'Ticket that never got raised', msgs:[
+   {s:'in',t:'<b>Rescheduled ✓</b><br>Arriving today between 6 and 8 PM.'},
+   {s:'sys',t:'Resolved by AI · no agent touched this'}]}
+ ],
+ rcs:[
+  {lab:'Status as a rich card', tap:'Reschedule', msgs:[
+   {s:'rcard',title:'Out for delivery 🚚',t:'Order #48291 · Arriving today by 7 PM · Rider: Imran',acts:['Track live','Reschedule']}]},
+  {lab:'Chips handle the reschedule', tap:'6 – 8 PM', msgs:[
+   {s:'in',t:'Pick a delivery window:'},
+   {s:'chips',items:['2 – 4 PM','4 – 6 PM','6 – 8 PM']}]},
+  {lab:'Done', msgs:[
+   {s:'out',t:'6 – 8 PM'},
+   {s:'in',t:'Rescheduled ✓ Arriving between 6 and 8 PM today.'}]}
+ ]
+},
+
+{
+ id:'winback', name:'Lapsed Customer Win-back',
+ one:'Re-open a dead thread with what has changed since they left, not with a bigger discount.',
+ brand:'Aurelia Jewels', ini:'A', inds:['Retail'], stage:'Retain', cat:'Marketing', effort:'Standard',
+ trigger:'No purchase in 180 days AND previously purchased ≥ 1',
+ caps:['Audience Agent','Content Agent','Journeys','Fallback on Channels'],
+ prereq:['Purchase history in the customer profile','Marketing opt-in still valid'],
+ verdict:{ pick:'RCS',
+  wa:'Reliable reach and a thread with their old order history already in it, which makes the message feel like continuity rather than a cold pitch.',
+  rcs:'A "here is what is new since you left" carousel does more work than any amount of copy. Strongest visual format for re-engagement.' },
+ proof:null,
+ talk:['Push back on discount-first win-back. Ask what their last win-back campaign offered and what it did to margin.',
+  'The Audience Agent angle matters here: lapsed is not one segment. Someone who bought once and left is a different message from a former repeat buyer.',
+  'Set the expectation honestly — win-back rates are single digit on every channel. The win is doing it at WhatsApp cost against email response rates.'],
+ obj:{q:'"These people ignored our last six emails. Why would WhatsApp be different?"',
+  a:'Because they will see it. Your emails were probably never opened — that is not a message problem, it is a delivery problem. Expect the same conversion rate on a much larger denominator of people who actually read it.'},
+ tpl:`It has been a while, <v>{{first_name}}</v> 👋\nQuite a lot has changed since your <v>{{last_product}}</v> — here is the short version.\n\n[See what is new]`,
+ wa:[
+  {lab:'180 days quiet', tap:'See what is new', msgs:[
+   {s:'sys',t:'Segment · lapsed 180d · previously purchased'},
+   {s:'in',t:'It has been a while, Priya 👋<br>Quite a lot has changed since your Kundan Jhumkas. Here is the short version.',btns:['See what is new','Unsubscribe']}]},
+  {lab:'What changed, not what is cheap', msgs:[
+   {s:'out',t:'See what is new'},
+   {s:'in',t:'Three things you have not seen 👇'},
+   {s:'tiles',items:[{n:'Lab Diamonds',p:'New line',g:'g6'},{n:'Try at Home',p:'Now live',g:'g1',sel:1},{n:'Bandra Store',p:'Just opened',g:'g7'}]}]},
+  {lab:'Re-engaged, no discount spent', msgs:[
+   {s:'in',t:'Want a stylist to bring three pieces to you? No obligation.',btns:['Book a home trial','Just browsing']},
+   {s:'sys',t:'Not read in 48h → fallback to SMS'}]}
+ ],
+ rcs:[
+  {lab:'"What is new" carousel', tap:'Learn more', msgs:[
+   {s:'in',t:'It has been a while, Priya 👋 Here is what changed since your last visit.'},
+   {s:'carousel',cards:[
+    {n:'Lab diamonds',t:'A whole new line, from ₹18k',g:'g6',cap:'NEW',acts:['Learn more']},
+    {n:'Try at home',t:'Three pieces, brought to you',g:'g1',cap:'SERVICE',acts:['Learn more']},
+    {n:'Bandra store',t:'2.1 km from you',g:'g7',cap:'NOW OPEN',acts:['Learn more']}]}]},
+  {lab:'Low-commitment next step', msgs:[
+   {s:'in',t:'Want to see three pieces at home? No obligation, no charge.'},
+   {s:'chips',items:['Book a home trial','Visit the store','Not now']}]}
+ ]
+},
+
+/* ==================================== BFSI ============================== */
+{
+ id:'kyc-flow', name:'KYC & Document Collection',
+ one:'Collect PAN, address and a document upload inside the chat, so onboarding does not die on a web form.',
+ brand:'Meridian Bank', ini:'M', inds:['BFSI'], stage:'Onboard', cat:'Utility', effort:'Standard',
+ trigger:'application_created with kyc_status = pending',
+ caps:['WhatsApp Flows','RCS Webview','Journeys','AI Chatbot','Fallback on Channels'],
+ prereq:['Flow endpoint wired to the KYC system, or an existing mobile KYC page for the webview','Encrypted media handling signed off by compliance'],
+ verdict:{ pick:'WhatsApp',
+  wa:'A native, encrypted, multi-screen form with document upload. Submissions arrive at your endpoint as an encrypted payload — there is no web page in the journey at all, and it reaches iOS.',
+  rcs:'The webview runs your existing KYC journey inside Messages, document upload included, so nothing switches apps. The trade-off is that it is your web page rather than a native encrypted form payload, and reach is Android-dependent.' },
+ proof:null,
+ talk:['Get their application drop-off number between "started" and "KYC complete". In BFSI it is routinely 40-60%, and it is the most expensive leak they have.',
+  'The channel question here is about form mechanics, not capability. A WhatsApp Flow returns an encrypted payload to their endpoint; an RCS webview renders the KYC page they already built. Ask which one their compliance team would rather sign off — that usually picks the channel for you.',
+  'Bring compliance into the room early rather than late. Flows are encrypted end to end and the data goes to their endpoint, not ours to keep.'],
+ obj:{q:'"Compliance will never allow KYC documents over WhatsApp."',
+  a:'That is the right instinct and the detail matters. Flow submissions are encrypted with your public key and posted to your endpoint — we do not store the document. And if they would rather not put a form in the channel at all, the RCS webview route keeps collection on their own hosted page and only the entry point moves. Get us 30 minutes with the compliance lead and the DPO; this goes much better with the architecture on the table.'},
+ tpl:`Hi <v>{{first_name}}</v>, your <v>{{product}}</v> application is almost done.\nOne step left: KYC. It takes about two minutes, right here.\n\n[Start KYC]`,
+ wa:[
+  {lab:'Application stalled at KYC', tap:'Start KYC', msgs:[
+   {s:'in',t:'Hi Rahul, your savings account application is almost done.<br>One step left: KYC. About two minutes, right here.',btns:['Start KYC','Remind me tomorrow']}]},
+  {lab:'Encrypted Flow, in the thread', tap:'Submit documents', msgs:[
+   {s:'flow',title:'Complete your KYC',cta:'Submit documents',body:[
+    {k:'lg',t:'Identity'},{k:'opt',t:'PAN',v:'ABCDE1234F'},
+    {k:'lg',t:'Address proof'},{k:'opt',t:'Aadhaar · uploaded',sel:1},
+    {k:'lg',t:'Selfie verification'},{k:'opt',t:'Photo captured',sel:1},
+    {k:'inp',t:'🔒 Encrypted · sent to Meridian, not stored by Netcore'}]}]},
+  {lab:'Received and processing', ms:1900, msgs:[
+   {s:'sys',t:'Documents received · encrypted · under review'},
+   {s:'in',t:'Got them, thank you 🙌<br>Verification usually takes under 10 minutes. We will message you here.'}]},
+  {lab:'Onboarded without a single web page', msgs:[
+   {s:'in',t:'<b style="color:#0E8A49">✓ KYC verified</b><br>Your account is active. A/c ending 4471.',btns:['Set up UPI','Download welcome kit']}]}
+ ],
+ rcs:[
+  {lab:'Application stalled at KYC', tap:'Start KYC', msgs:[
+   {s:'rcard',title:'One step left: KYC',t:'Your savings account application is almost done. About two minutes, without leaving Messages.',acts:['Start KYC','Remind me tomorrow']}]},
+  {lab:'Your own KYC page, inside Messages', tap:'Submit documents', msgs:[
+   {s:'out',t:'Start KYC'},
+   {s:'webview',site:'secure.meridianbank.com/kyc',title:'Complete your KYC',cta:'Submit documents',body:[
+    {k:'lg',t:'Identity'},{k:'opt',t:'PAN',v:'ABCDE1234F'},
+    {k:'lg',t:'Address proof'},{k:'opt',t:'Aadhaar · uploaded',sel:1},
+    {k:'lg',t:'Selfie verification'},{k:'opt',t:'Photo captured',sel:1}],
+    note:'Bank-hosted page rendered in-app · upload works, exactly as on web'}]},
+  {lab:'Verified, confirmed in the thread', msgs:[
+   {s:'in',t:'<b>KYC verified ✓</b><br>Your account is active. A/c ending 4471.'},
+   {s:'chips',items:['Set up UPI','Download welcome kit']}]}
+ ]
+},
+
+{
+ id:'card-activation', name:'Card Activation & First Use',
+ one:'Get a delivered card activated and used within 48 hours, which is the single strongest predictor of whether it stays active at all.',
+ brand:'Meridian Bank', ini:'M', inds:['BFSI'], stage:'Onboard', cat:'Utility', effort:'Standard',
+ trigger:'card_delivered event, then no activation in 24h',
+ caps:['WhatsApp Flows','RCS Webview','Journeys','Direct Send API'],
+ prereq:['Card lifecycle events available','PIN-set flow or hosted activation page security-reviewed'],
+ verdict:{ pick:'Either',
+  wa:'A native Flow handles PIN and limits inside the thread, and the answers return as an encrypted payload rather than a page view.',
+  rcs:'The webview runs your existing secure activation page inside Messages — useful precisely because most new cardholders have not installed the app yet, which is where you would otherwise send them.' },
+ proof:null,
+ talk:['Ask what their 30-day card activation rate is and what a dormant card costs them in acquisition write-off.',
+  'The second half matters more than activation — a first transaction inside a week is what makes the card habitual. Pair activation with a relevant first-use offer.',
+  'This is a good phase-one BFSI use case because the events already exist in the card system; there is very little new plumbing.'],
+ obj:{q:'"Cardholders should activate in our mobile app. We do not want to fragment that."',
+  a:'Agreed, and either route can end by deep-linking into the app for the PIN step. But note the timing problem: at activation, app adoption is at its lowest — you are asking someone to install before they can use the card. A Flow or a webview lets them activate now and install later.'},
+ tpl:`Your <v>{{card_name}}</v> has arrived, <v>{{first_name}}</v> 💳\nActivate it in about a minute and your welcome benefits switch on.\n\n[Activate card]`,
+ wa:[
+  {lab:'Card delivered, still dormant', tap:'Activate card', msgs:[
+   {s:'in',img:'g8',cap:'MERIDIAN PLATINUM',t:'Your Meridian Platinum has arrived 💳<br>Activate it in about a minute and your welcome benefits switch on.',btns:['Activate card','What are the benefits?']}]},
+  {lab:'Secure activation Flow', tap:'Activate', msgs:[
+   {s:'flow',title:'Activate your card',cta:'Activate',body:[
+    {k:'lg',t:'Confirm identity'},{k:'opt',t:'Card ending',v:'4471'},{k:'opt',t:'OTP verified',sel:1},
+    {k:'lg',t:'Set your PIN'},{k:'inp',t:'• • • •'},
+    {k:'lg',t:'Enable'},{k:'opt',t:'Online transactions',sel:1},{k:'opt',t:'International',v:'Off'}]}]},
+  {lab:'Active — now drive first use', msgs:[
+   {s:'in',t:'<b style="color:#0E8A49">✓ Card active</b><br>PIN set. Online payments enabled.'},
+   {s:'in',t:'Your welcome offer is live: 5% back on your first ₹10,000 of spend this month.',btns:['See partner offers','Set spend limits']}]}
+ ],
+ rcs:[
+  {lab:'Activation nudge', tap:'Activate now', msgs:[
+   {s:'rcard',img:'g8',cap:'MERIDIAN PLATINUM',title:'Your card has arrived 💳',t:'Activate to switch on your welcome benefits — 5% back on your first ₹10,000.',acts:['Activate now','See benefits']}]},
+  {lab:'Secure activation page, in-app', tap:'Activate card', msgs:[
+   {s:'out',t:'Activate now'},
+   {s:'webview',site:'secure.meridianbank.com',title:'Activate card ••4471',cta:'Activate card',body:[
+    {k:'lg',t:'Verify'},{k:'opt',t:'OTP sent to ••••4471',sel:1},
+    {k:'lg',t:'Set your PIN'},{k:'inp',t:'• • • •'},
+    {k:'lg',t:'Enable'},{k:'opt',t:'Online transactions',sel:1},{k:'opt',t:'International',v:'Off'}],
+    note:'Bank-hosted page rendered in-app · no app install required'}]},
+  {lab:'Active, and pushed toward first use', msgs:[
+   {s:'in',t:'<b>Card active ✓</b><br>PIN set. Online payments enabled.'},
+   {s:'rcard',title:'5% back on your first ₹10,000',t:'Your welcome offer is live for the rest of this month.',acts:['See partner offers','Set spend limits']}]}
+ ]
+},
+
+{
+ id:'policy-renewal', thumbAt:2, name:'Policy Renewal & Payment',
+ one:'Catch the renewal before it lapses, and let them pay in the same message they read it in.',
+ brand:'Meridian Insurance', ini:'M', inds:['BFSI'], stage:'Retain', cat:'Utility', effort:'Standard',
+ trigger:'policy_expiry − 30 / − 15 / − 3 days, unpaid',
+ caps:['Journeys','WhatsApp Payments','RCS Webview','Voice Calling','Fallback on Channels'],
+ prereq:['Policy master synced','Payment collection on the WABA, or a mobile renewal page for the webview'],
+ verdict:{ pick:'Either',
+  wa:'Payment is native in-thread, and you can escalate a high-value renewal to a WhatsApp voice call without losing the thread. Strongest for advisor-assisted renewals and for iOS reach.',
+  rcs:'Cheap branded reminders at scale on Android, and the webview runs your existing renewal-and-pay page inside Messages — no new payment integration, no app switch.' },
+ proof:{n:'60%', l:'increase in policy renewal revenue YoY', who:'Bajaj Allianz'},
+ talk:['Open with the lapse rate, not the channel. Every lapsed policy is churn they already paid to acquire.',
+  'The three-touch structure is the substance: T−30 reminder, T−15 with payment, T−3 with an advisor call option. Do not let this be reduced to "send a WhatsApp reminder".',
+  'Bajaj Allianz is the strongest logo in the deck for BFSI. Use it, and name the mechanism — omnichannel journeys with WhatsApp carrying the payment.'],
+ obj:{q:'"Renewals are our agents\' income. They will resist automating this."',
+  a:'Then position it as agent support rather than agent replacement. The journey handles the 70% who renew without help, and it hands the agent a ranked list of the ones who opened but did not pay — warmer calls, less chasing. Their income goes up, not down.'},
+ tpl:`Hi <v>{{first_name}}</v>, your <v>{{policy_type}}</v> policy <v>{{policy_no}}</v> is due on <v>{{due_date}}</v>.\nRenew now to keep cover unbroken.\n\nPremium <v>{{amount}}</v>\n\n[Renew now] [Talk to an advisor]`,
+ wa:[
+  {lab:'30 days before expiry', tap:'Renew now', msgs:[
+   {s:'in',t:'Hi Rahul, your health policy is due for renewal.',
+    rows:[['Policy','MH-88214'],['Cover','₹10,00,000'],['Due','18 Sep 2026'],['—','Premium','₹18,400']],
+    btns:['Renew now','Talk to an advisor']}]},
+  {lab:'Payment in the same thread', tap:'Pay ₹18,400', msgs:[
+   {s:'out',t:'Renew now'},
+   {s:'in',t:'Same cover, no medicals needed 👍',rows:[['Premium','₹18,400'],['No-claim bonus','− ₹1,200','ok'],['—','Payable','₹17,200']],btns:['Pay ₹18,400','Change cover']}]},
+  {lab:'Renewed, document delivered', msgs:[
+   {s:'sys',t:'UPI · payment authorised'},
+   {s:'in',t:'<b style="color:#0E8A49">✓ Policy renewed</b><br>MH-88214 active until 18 Sep 2027.',btns:['Download policy PDF']}]},
+  {lab:'High-value cases escalate to a call', msgs:[
+   {s:'sys',t:'Opened twice, not paid · premium > ₹50k → advisor call'},
+   {s:'call',brand:'Meridian Insurance',ini:'M',st:'Incoming WhatsApp Call'}]}
+ ],
+ rcs:[
+  {lab:'Renewal reminder card', tap:'Renew now', msgs:[
+   {s:'rcard',title:'Renewal due · 18 Sep',t:'Policy MH-88214 · Health · ₹10,00,000 cover. Premium ₹18,400.',acts:['Renew now','Talk to an advisor']}]},
+  {lab:'Renewal page opens in the webview', tap:'Pay ₹17,200', msgs:[
+   {s:'out',t:'Renew now'},
+   {s:'webview',site:'meridianinsurance.com/renew',title:'Renew MH-88214',cta:'Pay ₹17,200',body:[
+    {k:'lg',t:'Cover'},{k:'opt',t:'Health · ₹10,00,000',sel:1},
+    {k:'lg',t:'Premium'},{k:'opt',t:'Base premium',v:'₹18,400'},{k:'opt',t:'No-claim bonus',v:'− ₹1,200'},
+    {k:'lg',t:'Payable'},{k:'opt',t:'Total',v:'₹17,200'}]}]},
+  {lab:'Renewed, document back in the thread', msgs:[
+   {s:'in',t:'<b>Policy renewed ✓</b><br>MH-88214 active until 18 Sep 2027.'},
+   {s:'chips',items:['Download policy PDF','Add a family member']}]}
+ ]
+},
+
+{
+ id:'emi-due', name:'EMI / Premium Due Reminder',
+ one:'A dated reminder with a pay button, and a date-change option for the people who are about to bounce.',
+ brand:'Meridian Bank', ini:'M', inds:['BFSI'], stage:'Retain', cat:'Utility', effort:'Quick win',
+ trigger:'emi_due − 3 days, and again on due date if unpaid',
+ caps:['Direct Send API','WhatsApp Payments','RCS Webview','Journeys','Fallback on Channels'],
+ prereq:['Loan servicing events available','Mandate/NACH status visible in the profile'],
+ verdict:{ pick:'Either',
+  wa:'Pay in-thread, and a Flow can handle a due-date change without an agent. Best where you want the reminder to actually resolve the payment.',
+  rcs:'The cheapest way to put a dated, branded reminder in front of a large Android base — and the webview carries the payment and the date change on your existing servicing pages.' },
+ proof:null,
+ talk:['Ask about bounce rate on auto-debit and what each bounce costs in penalty reversal and collections effort.',
+  'The date-change option is the insight to sell. Most bounces are timing, not inability — someone paid on the 5th when salary lands on the 7th.',
+  'Utility category and very little integration work, so this is a strong first BFSI use case to get live inside a month.'],
+ obj:{q:'"We have NACH auto-debit. Reminders are redundant."',
+  a:'NACH tells you it failed after it failed. A reminder three days out lets the customer top up the account or move the date, which turns a bounce into a payment. Compare your bounce rate on the accounts that got a reminder against the ones that did not.'},
+ tpl:`Hi <v>{{first_name}}</v>, your EMI of <v>{{amount}}</v> for loan <v>{{loan_id}}</v> is due on <v>{{due_date}}</v>.\n\n[Pay now] [Change my due date]`,
+ wa:[
+  {lab:'Three days before due', tap:'Change my due date', msgs:[
+   {s:'in',t:'Hi Rahul, your EMI is due in 3 days.',
+    rows:[['Loan','PL-77310'],['EMI','₹12,340'],['—','Due','25 Aug']],
+    btns:['Pay now','Change my due date']}]},
+  {lab:'The bounce you just prevented', tap:'Move to the 7th', msgs:[
+   {s:'out',t:'Change my due date'},
+   {s:'in',t:'No problem. When does your salary usually land?',btns:['Move to the 7th','Move to the 10th','Keep the 25th']}]},
+  {lab:'Resolved without collections', msgs:[
+   {s:'in',t:'<b>Updated ✓</b><br>Your EMI date moves to the 7th from next month. NACH mandate updated.',btns:['Pay this month now']},
+   {s:'sys',t:'Bounce avoided · no penalty, no collections call'}]}
+ ],
+ rcs:[
+  {lab:'Dated reminder at scale', tap:'Pay now', msgs:[
+   {s:'rcard',title:'EMI due 25 Aug',t:'Loan PL-77310 · ₹12,340. Pay before the due date to avoid a penalty.',acts:['Pay now','Change due date']}]},
+  {lab:'Payment in the webview', tap:'Pay ₹12,340', msgs:[
+   {s:'out',t:'Pay now'},
+   {s:'webview',site:'meridianbank.com/pay',title:'EMI · PL-77310',cta:'Pay ₹12,340',body:[
+    {k:'lg',t:'Due'},{k:'opt',t:'25 Aug 2026',v:'₹12,340'},
+    {k:'lg',t:'Pay from'},{k:'opt',t:'A/c ••4471 · Savings',sel:1},
+    {k:'lg',t:'Or use'},{k:'opt',t:'UPI · any app'}]}]},
+  {lab:'Receipt back in the thread', msgs:[
+   {s:'in',t:'<b>Paid ✓</b><br>₹12,340 received for PL-77310. Receipt #R-20918.'},
+   {s:'chips',items:['Download receipt','Change my EMI date']}]}
+ ]
+},
+
+{
+ id:'claim-status', thumbAt:3, name:'Claim Status & Contextual Human Handoff',
+ one:'AI answers the status question instantly; the moment it becomes a dispute, a human takes over with the whole thread already in front of them.',
+ brand:'Meridian Insurance', ini:'M', inds:['BFSI'], stage:'Support', cat:'Service', effort:'Standard',
+ trigger:'Inbound customer message, or claim_status_changed push',
+ caps:['AI Chatbot','Agent Handoff','Direct Send API','Voice Calling'],
+ prereq:['Claims system readable via API','Agent desk connected'],
+ verdict:{ pick:'WhatsApp',
+  wa:'The session model supports a genuine two-way conversation and a clean handoff to a live agent with full history. This is a support channel, not a notification channel.',
+  rcs:'Handles the status lookup fine on Android. Two-way support at scale is less mature, and your iOS base needs a fallback anyway.' },
+ proof:null,
+ talk:['The number to ask for is average handling time on claim status calls, and what share of calls are status-only. That is the deflection case.',
+  'The handoff is the emotional part of the demo. Show the agent view: full thread, claim number, amount. The customer never repeats themselves.',
+  'For high-value or distressed claims, show the escalation to a WhatsApp voice call. Moving from chat to voice without losing context is a genuinely hard thing that they will not have seen elsewhere.'],
+ obj:{q:'"Our claims are too complex for a bot. Customers will get stuck in a loop."',
+  a:'Which is why the design point is not "resolve everything". It is resolve status, documents and timelines, then escalate anything else immediately with context attached. If the bot cannot answer in one turn, it hands over — no loops by design.'},
+ tpl:`Your claim <v>{{claim_id}}</v> has been <v>{{status}}</v>.\n<v>{{amount}}</v> will be credited to the account ending <v>{{acc_last4}}</v> within <v>{{tat}}</v>.\n\n[View breakup] [Talk to a human]`,
+ wa:[
+  {lab:'Customer asks', ms:1300, msgs:[
+   {s:'out',t:'Where has my claim reached?'},
+   {s:'typ',keep:false}]},
+  {lab:'AI resolves it instantly', tap:'Talk to a human', msgs:[
+   {s:'in',t:'<b style="color:#0E8A49">Approved ✓</b>',rows:[['Claim','CL-88214'],['Approved','₹42,600'],['Credit to','A/c ••4471'],['—','Expected','Within 48 hours']],btns:['View breakup','Talk to a human']}]},
+  {lab:'It becomes a dispute', ms:1800, msgs:[
+   {s:'out',t:'I disagree with the settlement amount. ₹18,000 of my bill was not covered.'},
+   {s:'sys',t:'Intent: dispute → routing to a claims specialist'}]},
+  {lab:'Human arrives with full context', msgs:[
+   {s:'in',t:'Hi Rahul, this is Priya from Claims. I can see your full thread and the breakup for CL-88214 — let me walk you through the ₹18,000.',btns:['Yes, please','Call me instead']},
+   {s:'sys',t:'Agent view: full history · claim · policy · past claims'}]},
+  {lab:'Escalate to voice, context intact', msgs:[
+   {s:'call',brand:'Meridian Insurance',ini:'M',st:'Priya from Claims · calling'}]}
+ ],
+ rcs:[
+  {lab:'Status lookup', tap:'Talk to a human', msgs:[
+   {s:'out',t:'Where has my claim reached?'},
+   {s:'rcard',title:'Claim CL-88214 · Approved',t:'₹42,600 credited to A/c ••4471 within 48 hours.',acts:['View breakup','Talk to a human']}]},
+  {lab:'Handoff works, history is thinner', msgs:[
+   {s:'out',t:'Talk to a human'},
+   {s:'in',t:'Connecting you to a claims specialist…'},
+   {s:'in',t:'Hi Rahul, Priya from Claims here. Could you confirm your claim number?'},
+   {s:'sys',t:'⚠ Less session continuity than WhatsApp · iOS reach varies'}]}
+ ]
+},
+
+{
+ id:'loan-preapproval', thumbAt:2, name:'Pre-approved Offer → Application',
+ one:'Put a real, personalised number in front of the customer and let them compare tenures before they ever speak to a salesperson.',
+ brand:'Meridian Bank', ini:'M', inds:['BFSI'], stage:'Convert', cat:'Marketing', effort:'Standard',
+ trigger:'Eligibility model flags customer as pre-approved',
+ caps:['Audience Agent','WhatsApp Flows','RCS Webview','Journeys','Voice Calling'],
+ prereq:['Eligibility scores available per customer','Application API, or a mobile application page for the webview'],
+ verdict:{ pick:'Both',
+  wa:'The Flow lets them pick amount and tenure and watch the EMI move — that interaction is what converts. Then it hands straight to the application.',
+  rcs:'The carousel is an unusually good fit for tenure comparison: three cards, three EMIs, swipeable side by side. The webview then carries the application through to submission in the same session.' },
+ proof:null,
+ talk:['Ask how pre-approved offers reach customers today. Usually an SMS with a link, or an outbound call to a cold list.',
+  'The demo point is the EMI calculator inside the Flow. Customers self-select the tenure they can afford, which raises approval-to-disbursal.',
+  'Volume caution worth raising yourself: this is a marketing-category message on a large base. Segment tightly or the cost story turns against you.'],
+ obj:{q:'"Sending loan offers on WhatsApp feels like spam. It will hurt the brand."',
+  a:'It does if it goes to everyone. Sent only to genuinely pre-approved customers with their real number in it, it reads as service, not solicitation. The tell is response rate — spam gets blocks, relevant offers get replies. We watch quality rating weekly and pull back if it moves.'},
+ tpl:`<v>{{first_name}}</v>, you are pre-approved for <v>{{amount}}</v>.\nNo documents needed — your existing KYC covers it.\n\n[See my offer] [Not interested]`,
+ wa:[
+  {lab:'A real number, not a teaser', tap:'See my offer', msgs:[
+   {s:'in',t:'Rahul, you are pre-approved.',
+    rows:[['Amount','₹8,00,000'],['Rate','From 10.5% p.a.'],['Documents','None needed'],['—','Valid until','30 Sep']],
+    btns:['See my offer','Not interested']}]},
+  {lab:'Flow does the EMI maths', tap:'Continue', msgs:[
+   {s:'flow',title:'Build your loan',cta:'Continue',body:[
+    {k:'lg',t:'Amount'},{k:'opt',t:'Loan amount',v:'₹5,00,000'},
+    {k:'lg',t:'Tenure'},{k:'opt',t:'36 months'},{k:'opt',t:'48 months',sel:1},{k:'opt',t:'60 months'},
+    {k:'lg',t:'Your EMI'},{k:'opt',t:'Monthly',v:'₹12,780'}]}]},
+  {lab:'Self-selected, then handed over', msgs:[
+   {s:'in',t:'₹5,00,000 over 48 months at ₹12,780 a month.',rows:[['Processing fee','₹5,900'],['Disbursal','Within 24 hours'],['—','EMI','₹12,780']],btns:['Accept and continue','Talk to an advisor']}]},
+  {lab:'Warm call, not a cold one', msgs:[
+   {s:'sys',t:'Configured but not accepted → advisor call, context attached'},
+   {s:'call',brand:'Meridian Bank',ini:'M',st:'Loans desk · calling'}]}
+ ],
+ rcs:[
+  {lab:'Tenure comparison as a carousel', tap:'Choose', msgs:[
+   {s:'in',t:'Rahul, you are pre-approved for ₹8,00,000. Compare the options 👇'},
+   {s:'carousel',cards:[
+    {n:'36 months',t:'EMI ₹16,240 · Least interest',g:'g5',cap:'SHORTEST',acts:['Choose']},
+    {n:'48 months',t:'EMI ₹12,780 · Balanced',g:'g8',cap:'POPULAR',acts:['Choose']},
+    {n:'60 months',t:'EMI ₹10,740 · Lowest EMI',g:'g3',cap:'LIGHTEST',acts:['Choose']}]}]},
+  {lab:'Application completes in the webview', tap:'Submit application', msgs:[
+   {s:'out',t:'Choose'},
+   {s:'webview',site:'meridianbank.com/loans',title:'48 months · EMI ₹12,780',cta:'Submit application',body:[
+    {k:'lg',t:'Loan'},{k:'opt',t:'Amount',v:'₹5,00,000'},{k:'opt',t:'Tenure',v:'48 months'},
+    {k:'lg',t:'EMI'},{k:'opt',t:'Monthly',v:'₹12,780'},
+    {k:'lg',t:'Documents'},{k:'opt',t:'Existing KYC · nothing to upload',sel:1}]}]},
+  {lab:'Approved, confirmed in the thread', msgs:[
+   {s:'in',t:'<b>Approved ✓</b><br>₹5,00,000 disbursing to A/c ••4471 within 24 hours.'},
+   {s:'chips',items:['View EMI schedule','Talk to an advisor']}]}
+ ]
+},
+
+{
+ id:'txn-alert', name:'Transaction Alert & Fraud Check',
+ one:'Replace the unreadable SMS alert with a branded message the customer can act on — including freezing the card in one tap.',
+ brand:'Meridian Bank', ini:'M', inds:['BFSI'], stage:'Support', cat:'Utility', effort:'Quick win',
+ trigger:'transaction_posted above threshold, or flagged by the fraud model',
+ caps:['Direct Send API','AI Chatbot','Fallback on Channels'],
+ prereq:['Real-time transaction feed','Card-block API callable from the journey'],
+ verdict:{ pick:'Either',
+  wa:'Two-way, so "report fraud" actually does something. Best where you want the alert to become an action.',
+  rcs:'Highest-volume, lowest-cost option for the alert itself on Android, with your brand name and logo instead of a shortcode. Very strong replacement for transactional SMS.' },
+ proof:null,
+ talk:['This is the volume use case in BFSI, so it is where the channel-economics conversation actually gets decided. Get their monthly transactional SMS volume and spend.',
+  'The differentiator is not the alert, it is the one-tap freeze. Every fraud call deflected is minutes of contact-centre time and a much better customer moment.',
+  'For a bank with a large Android base, RCS versus SMS on this single use case can fund the rest of the programme. Model it explicitly.'],
+ obj:{q:'"Transactional SMS is dirt cheap and it is regulator-approved. Why change?"',
+  a:'Keep SMS as the fallback — we will trigger it automatically when RCS or WhatsApp cannot deliver. The case for changing is not price alone, it is that a branded, verified, tappable alert cuts fraud-response time and deflects calls. Price the deflected calls, not just the message.'},
+ tpl:`<v>{{amount}}</v> debited from A/c <v>{{acc_last4}}</v> at <v>{{merchant}}</v> on <v>{{datetime}}</v>.\nBalance <v>{{balance}}</v>.\n\n[This was me] [I don't recognise this]`,
+ wa:[
+  {lab:'Transaction posted', tap:"I don't recognise this", msgs:[
+   {s:'in',t:'<b>₹42,600 debited</b>',rows:[['Account','••4471'],['Merchant','LUXE RETAIL SGP'],['When','Today, 12:28'],['—','Balance','₹1,18,240']],btns:['This was me',"I don't recognise this"]}]},
+  {lab:'One tap freezes the card', ms:1700, msgs:[
+   {s:'out',t:"I don't recognise this"},
+   {s:'sys',t:'Card ••4471 frozen · dispute CL-99120 raised'},
+   {s:'in',t:'<b style="color:#0E8A49">Card frozen ✓</b><br>Dispute CL-99120 raised. No further transactions will go through.'}]},
+  {lab:'Resolution path, no call centre', msgs:[
+   {s:'in',t:'What next?',btns:['Order a replacement','Speak to fraud team','Unfreeze — it was me']},
+   {s:'sys',t:'Fraud call deflected · resolved in 38 seconds'}]}
+ ],
+ rcs:[
+  {lab:'Branded alert instead of a shortcode', tap:'Not me — freeze card', msgs:[
+   {s:'rcard',title:'₹42,600 debited · ••4471',t:'LUXE RETAIL SGP · Today 12:28 · Balance ₹1,18,240',acts:['This was me','Not me — freeze card']}]},
+  {lab:'Action confirmed', msgs:[
+   {s:'out',t:'Not me — freeze card'},
+   {s:'in',t:'Card ••4471 frozen ✓ Dispute CL-99120 raised.'},
+   {s:'chips',items:['Order replacement','Speak to fraud team']}]},
+  {lab:'And when RCS cannot deliver', msgs:[
+   {s:'sys',t:'Undelivered on RCS → automatic SMS fallback'},
+   {s:'in',t:'MERIDIAN: Rs 42,600 debited from A/c ••4471 at LUXE RETAIL SGP. Not you? Call 1800-XXX.'}]}
+ ]
+},
+
+{
+ id:'sip-nudge', name:'Portfolio Nudge & SIP Step-up',
+ one:'Turn a quarterly statement nobody opens into a two-tap decision to invest more.',
+ brand:'Meridian Wealth', ini:'M', inds:['BFSI'], stage:'Engage', cat:'Marketing', effort:'Standard',
+ trigger:'Quarterly, or on salary-credit detection / portfolio milestone',
+ caps:['Content Agent','WhatsApp Flows','RCS Webview','Scheduler Agent','Journeys'],
+ prereq:['Portfolio data accessible','Mandate modification API or a hosted mandate page'],
+ verdict:{ pick:'Both',
+  wa:'The step-up needs a form — pick the amount, confirm the mandate. A native Flow keeps that in the thread.',
+  rcs:'A three-card fund carousel with returns on each reads far better than a PDF statement, and the webview runs your mandate-change page inside Messages so the step-up completes in the same session.' },
+ proof:null,
+ talk:['Ask how they currently drive SIP step-ups. Usually an email statement and a relationship-manager call, in that order of ineffectiveness.',
+  'Timing is the sell here: Scheduler Agent can fire this within a day of salary credit, which is when the decision is easy.',
+  'Keep the numbers real in the demo. Wealth customers spot a made-up return instantly and you lose the room.'],
+ obj:{q:'"Investment communication is heavily regulated. We cannot put returns in a WhatsApp message."',
+  a:'Then we put the disclaimer in the template and keep performance figures inside the authenticated Flow rather than the message body. This is a normal constraint and the pattern is well-trodden — we will build the templates with your compliance team, not around them.'},
+ tpl:`<v>{{first_name}}</v>, your portfolio is up <v>{{return_pct}}</v> this year 📈\nStepping up your SIP by <v>{{step_up}}</v> would add about <v>{{projected}}</v> over <v>{{years}}</v> years.\n\n[Step up my SIP] [View portfolio]\n<v>{{disclaimer}}</v>`,
+ wa:[
+  {lab:'Quarterly moment, right after payday', tap:'Step up my SIP', msgs:[
+   {s:'sys',t:'Salary credit detected · sent 10:15 AM'},
+   {s:'in',img:'g4',cap:'YOUR PORTFOLIO · +14.2%',t:'Rahul, your portfolio is up 14.2% this year 📈<br>A ₹2,000 step-up would add roughly ₹4.1L over 10 years.',btns:['Step up my SIP','View portfolio']}]},
+  {lab:'Flow handles the mandate', tap:'Confirm step-up', msgs:[
+   {s:'flow',title:'Step up your SIP',cta:'Confirm step-up',body:[
+    {k:'lg',t:'Current SIP'},{k:'opt',t:'Monthly',v:'₹10,000'},
+    {k:'lg',t:'Increase by'},{k:'opt',t:'₹1,000'},{k:'opt',t:'₹2,000',sel:1},{k:'opt',t:'₹5,000'},
+    {k:'lg',t:'New monthly SIP'},{k:'opt',t:'From 1 Sep',v:'₹12,000'}]}]},
+  {lab:'Done in the thread', msgs:[
+   {s:'in',t:'<b style="color:#0E8A49">✓ SIP updated</b><br>₹12,000 monthly from 1 Sep. Mandate updated automatically.',btns:['View portfolio']}]}
+ ],
+ rcs:[
+  {lab:'Portfolio as swipeable cards', tap:'Step up', msgs:[
+   {s:'in',t:'Rahul, your portfolio is up 14.2% this year 📈'},
+   {s:'carousel',cards:[
+    {n:'Bluechip Fund',t:'+16.4% · ₹4,000/mo',g:'g5',cap:'EQUITY',acts:['Step up']},
+    {n:'Flexi Cap',t:'+13.1% · ₹4,000/mo',g:'g4',cap:'EQUITY',acts:['Step up']},
+    {n:'Short Duration',t:'+7.2% · ₹2,000/mo',g:'g3',cap:'DEBT',acts:['Step up']}]}]},
+  {lab:'Amount choice via chips', tap:'+ ₹2,000', msgs:[
+   {s:'in',t:'How much would you like to add to Bluechip Fund?'},
+   {s:'chips',items:['+ ₹1,000','+ ₹2,000','+ ₹5,000']}]},
+  {lab:'Mandate change in the webview', tap:'Confirm step-up', msgs:[
+   {s:'out',t:'+ ₹2,000'},
+   {s:'webview',site:'meridianwealth.com/sip',title:'Step up · Bluechip Fund',cta:'Confirm step-up',body:[
+    {k:'lg',t:'Current'},{k:'opt',t:'Monthly SIP',v:'₹4,000'},
+    {k:'lg',t:'New'},{k:'opt',t:'From 1 Sep',v:'₹6,000'},
+    {k:'lg',t:'Mandate'},{k:'opt',t:'NACH · A/c ••4471',sel:1},
+    {k:'inp',t:'Mutual funds are subject to market risk.'}]}]},
+  {lab:'Confirmed in the thread', msgs:[
+   {s:'in',t:'<b>SIP updated ✓</b><br>Bluechip Fund ₹6,000 monthly from 1 Sep.'},
+   {s:'chips',items:['View portfolio','Step up another fund']}]}
+ ]
+}
+
+];
+</script>
+
+<script>
+/* ==========================================================================
+   APP — filters, grid, lifecycle rail, detail drawer, search, export
+   ========================================================================== */
+const $ = s => document.querySelector(s);
+
+/* Netcore wordmark — byte-identical to the government repository build.
+   .mark / .word are filled by CSS so the header, print and any dark surface
+   can recolour it without touching the path data. */
+const LOGO_SVG = `<svg class="ncl" viewBox="16.75 2 2466.5 496" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Netcore"><g class="mark"><path d="M343.2 13L308.5 99.9L342.2 169.7L379 79.6L459.2 79.6L459.2 387.2C459.2 398.9 454.5 410.2 446.2 418.5C437.8 426.8 426.5 431.4 414.8 431.4C405.4 431.4 389.2 426.2 382.8 413.5L333.7 305.9L333.4 306.4L252.4 129.5L252.6 129.2L218.6 54.9C199.5 16.4 160.2 2 128.1 2C98.6 2 70.3 13.7 49.4 34.5C28.5 55.3 16.8 83.5 16.8 112.9L17.9 486.9L186.4 486.9L229.9 393L196.2 323.1L150.4 420.4L83.6 420.4L83.6 112.9C83.6 101.1 88.3 89.9 96.6 81.6C105 73.2 116.3 68.6 128.1 68.6C134 68.6 154 69.9 161.3 89.2L199 171.8L211.4 199.4L292.1 376.2C306.2 406.5 321.8 439.9 328.7 454.3C342.7 483.4 379 498 414.8 498C429.4 498 443.8 495.1 457.3 489.6C470.8 484 483.1 475.8 493.4 465.5C503.7 455.2 511.9 443 517.5 429.5C523.1 416.1 526 401.7 526 387.1L526 13ZM343.2 13"/></g><g class="word"><path d="M638.6 412.1L638.6 98.3C638.5 97.6 638.6 96.9 638.8 96.2C639.1 95.5 639.5 94.9 640 94.4C640.5 93.9 641.2 93.6 641.9 93.3C642.6 93.1 643.4 93 644.1 93.1L710.5 93.1C711.9 93.1 713.2 93.4 714.3 94.1C715.5 94.7 716.4 95.7 716.9 96.9L860.1 319.5L862.6 319.5L862.6 98.3C862.5 97.6 862.5 96.9 862.8 96.2C863 95.5 863.4 94.9 864 94.4C864.5 93.9 865.1 93.6 865.8 93.3C866.6 93.1 867.3 93 868.1 93.1L923.2 93.1C923.9 93 924.7 93.1 925.4 93.3C926.1 93.6 926.8 93.9 927.3 94.4C927.8 94.9 928.2 95.5 928.5 96.2C928.7 96.9 928.8 97.6 928.7 98.3L928.7 413.6C928.8 414.3 928.7 415 928.5 415.6C928.2 416.3 927.8 416.9 927.3 417.4C926.8 417.9 926.1 418.3 925.4 418.5C924.7 418.7 923.9 418.8 923.2 418.7L856.8 418.7C855.5 418.4 854.4 417.7 853.5 416.8C852.7 415.9 852.1 414.8 851.9 413.6L706.6 190L704.7 190L704.7 412.1C704.8 412.8 704.8 413.5 704.5 414.2C704.3 414.9 703.9 415.5 703.4 416C702.8 416.5 702.2 416.9 701.5 417.1C700.8 417.3 700 417.4 699.3 417.3L644.1 417.3C643.4 417.4 642.6 417.3 641.9 417.1C641.2 416.9 640.5 416.5 640 416C639.5 415.5 639.1 414.9 638.8 414.2C638.6 413.5 638.5 412.8 638.6 412.1"/><path d="M1292.2 342.2L1292.2 216.7L1259.3 216.7C1258.6 216.8 1257.8 216.7 1257.2 216.5C1256.5 216.3 1255.9 215.9 1255.4 215.4C1254.9 214.9 1254.5 214.3 1254.3 213.6C1254 213 1254 212.2 1254.1 211.6L1254.1 173.6C1254.1 170 1255.9 168.2 1259.3 168.2L1292.2 168.2L1292.2 100.6C1292.2 99.9 1292.3 99.2 1292.5 98.5C1292.8 97.9 1293.2 97.3 1293.6 96.8C1294.1 96.2 1294.7 95.8 1295.4 95.6C1296 95.3 1296.7 95.1 1297.4 95.1L1354.7 94.7C1355.4 94.6 1356.2 94.7 1356.9 94.9C1357.6 95.2 1358.3 95.6 1358.8 96.1C1359.3 96.6 1359.7 97.3 1360 98C1360.2 98.7 1360.3 99.4 1360.2 100.1L1360.2 162.4C1360.2 165 1362.2 167 1364.7 167L1426 167C1426.8 166.9 1427.5 167 1428.2 167.2C1429 167.4 1429.6 167.8 1430.1 168.4C1430.7 168.9 1431.1 169.5 1431.3 170.2C1431.6 170.9 1431.6 171.7 1431.5 172.4L1431.5 211.6C1431.6 212.3 1431.5 213 1431.2 213.6C1430.9 214.3 1430.5 214.9 1430 215.4C1429.5 215.9 1428.9 216.3 1428.2 216.5C1427.5 216.7 1426.8 216.8 1426 216.7L1360.2 216.7L1360.2 362.7C1360.2 365.2 1362.2 367.2 1364.7 367.2L1426 367.2C1426.8 367.1 1427.5 367.2 1428.2 367.4C1428.9 367.6 1429.5 368 1430 368.5C1430.5 369 1430.9 369.6 1431.2 370.2C1431.5 370.9 1431.6 371.6 1431.5 372.3L1431.5 410.3C1431.6 411 1431.6 411.8 1431.3 412.5C1431.1 413.2 1430.7 413.8 1430.1 414.3C1429.6 414.9 1429 415.3 1428.2 415.5C1427.5 415.7 1426.8 415.8 1426 415.7L1367.8 415.7C1357.7 416.9 1347.5 415.8 1337.8 412.5C1328.2 409.3 1319.4 403.9 1312.2 396.9C1304.9 389.8 1299.4 381.3 1295.9 371.8C1292.5 362.3 1291.2 352.2 1292.2 342.2"/><path d="M2047.9 411.8L2047.9 242.6C2046.4 232.3 2047.4 221.9 2050.7 212.1C2054 202.3 2059.6 193.4 2066.9 186C2074.3 178.7 2083.3 173.2 2093.2 169.9C2103.1 166.6 2113.7 165.6 2124.1 167L2199.9 167C2200.7 166.9 2201.4 167 2202.1 167.2C2202.9 167.4 2203.5 167.8 2204 168.4C2204.6 168.9 2205 169.5 2205.2 170.2C2205.4 170.9 2205.5 171.7 2205.4 172.4L2205.4 216.4C2205.5 217.1 2205.3 217.8 2205.1 218.5C2204.8 219.2 2204.4 219.8 2203.9 220.3C2203.4 220.8 2202.8 221.2 2202.1 221.5C2201.4 221.7 2200.7 221.8 2199.9 221.8L2119.8 221.8C2117.3 221.8 2115.2 223.8 2115.2 226.3L2115.2 411.8C2115.2 415.4 2113.4 417.2 2110.3 417.2L2053.4 417.2C2052.6 417.3 2051.9 417.2 2051.2 417C2050.4 416.8 2049.8 416.4 2049.3 415.8C2048.7 415.3 2048.3 414.7 2048.1 414C2047.9 413.3 2047.8 412.5 2047.9 411.8"/><path d="M1872.7 370.5C1913.5 370.5 1936.5 342.2 1936.5 293.2C1936.5 244.1 1912.9 214.9 1872.7 214.9C1832.5 214.9 1808.9 243.2 1808.9 293.2C1808.9 343.1 1831.5 370.5 1872.7 370.5M1742.2 295.7C1742.2 294 1742.2 292.3 1742.1 290.6C1741.3 274.2 1743.9 257.8 1749.7 242.5C1755.8 226.3 1765.4 211.6 1777.8 199.4C1790.1 187.2 1805 177.8 1821.4 171.8C1844.4 162.7 1898.2 161.5 1924.2 171.6C1940.6 177.6 1955.6 187 1968 199.2C1980.4 211.4 1990.1 226.1 1996.2 242.3C2002.1 257.7 2004.7 274.1 2003.9 290.4C2003.8 292.2 2003.8 294.1 2003.8 295.9C2004.5 312.1 2001.7 328.4 1995.8 343.6C1989.6 359.7 1979.9 374.2 1967.5 386.3C1955.1 398.4 1940.2 407.7 1923.9 413.6C1892.2 424.5 1850.8 425.3 1821.7 413.4C1805.4 407.4 1790.6 398.1 1778.3 386.1C1765.9 374 1756.3 359.5 1750.1 343.4C1744.2 328.2 1741.5 312 1742.2 295.7"/><path d="M1461.5 293.1C1460.5 275.9 1463.2 258.7 1469.5 242.5C1475.7 226.4 1485.4 211.8 1497.8 199.6C1510.2 187.5 1525.1 178.1 1541.5 172C1557.9 166 1575.3 163.4 1592.8 164.6C1657.2 164.2 1703.6 196.5 1711.2 252.2C1711.3 252.9 1711.2 253.7 1711 254.4C1710.8 255.1 1710.4 255.8 1709.8 256.3C1709.3 256.9 1708.7 257.3 1708 257.6C1707.3 257.9 1706.5 258 1705.7 257.9L1651 260.6C1647.6 260.6 1646.1 258.8 1645.2 255.2C1644.4 249.2 1642.4 243.4 1639.4 238.1C1636.3 232.9 1632.2 228.3 1627.3 224.6C1622.5 220.9 1616.9 218.2 1611 216.6C1605.1 215.1 1598.9 214.7 1592.8 215.5C1552.9 215.5 1530.3 245.6 1530.3 293.8C1530.3 341.9 1553.5 371.1 1592.8 371.1C1605.4 372.9 1618.1 369.7 1628.4 362.3C1638.6 354.9 1644.9 345.2 1647 332.8C1647 332.1 1647.1 331.3 1647.4 330.6C1647.7 330 1648.1 329.4 1648.7 328.8C1649.2 328.3 1649.9 327.9 1650.6 327.7C1651.3 327.4 1652 327.3 1652.8 327.4L1708.2 328.9C1711.6 328.9 1714 330.7 1713.7 333.7C1705.2 389.1 1657.8 421.5 1592.2 421.1C1574.8 422.4 1557.3 420 1540.9 414C1524.6 408.1 1509.7 398.7 1497.3 386.6C1484.9 374.4 1475.3 359.8 1469.1 343.7C1462.9 327.6 1460.3 310.4 1461.5 293.1"/><path d="M1162.9 271.2C1163.4 263.7 1162.3 256.2 1159.7 249.1C1157.1 242.1 1153 235.6 1147.7 230.2C1142.4 224.8 1136.1 220.6 1129 217.8C1122 215 1114.4 213.7 1106.8 214C1098.8 213.3 1090.7 214.3 1083.1 216.9C1075.6 219.4 1068.6 223.5 1062.7 228.9C1056.8 234.3 1052.1 240.8 1048.9 248.1C1045.6 255.4 1044 263.2 1044 271.2ZM974.6 293.2C973.3 275.8 975.9 258.4 982.1 242.2C988.3 225.9 998 211.2 1010.5 199C1023 186.7 1038 177.3 1054.5 171.4C1071 165.5 1088.7 163.1 1106.2 164.6C1182.4 164.6 1228.1 212.8 1228.1 292.2L1228.1 305.8C1228.1 307.2 1227.5 308.6 1226.5 309.6C1225.4 310.6 1224 311.2 1222.6 311.2L1044 311.2C1043.8 319.4 1045.2 327.5 1048.3 335.1C1051.4 342.6 1056.1 349.5 1062 355.2C1068 360.8 1075.1 365.2 1082.8 368C1090.6 370.8 1098.9 372 1107.1 371.4C1118.1 373 1129.4 370.8 1139.1 365.4C1148.8 359.9 1155.5 353.4 1159.8 343.2C1160 341.9 1160.8 340.6 1161.9 339.8C1163.1 338.9 1164.5 338.5 1165.9 338.7L1220.7 341.4C1224.7 341.4 1226.5 341.4 1225.9 345.3C1217 392.9 1164.5 420.6 1105.3 419.9C1088 421.2 1070.6 418.8 1054.4 412.9C1038.1 407 1023.3 397.8 1010.9 385.8C998.5 373.8 988.9 359.3 982.6 343.3C976.4 327.4 973.6 310.3 974.6 293.2"/><path d="M2418 271.2C2418.5 263.7 2417.4 256.2 2414.8 249.1C2412.2 242.1 2408.1 235.6 2402.8 230.2C2397.5 224.8 2391.2 220.6 2384.1 217.8C2377.1 215 2369.5 213.7 2361.9 214C2353.9 213.3 2345.9 214.3 2338.3 216.9C2330.7 219.4 2323.7 223.5 2317.8 228.9C2311.9 234.3 2307.2 240.8 2304 248.1C2300.8 255.4 2299.1 263.2 2299.1 271.2ZM2229.7 293.2C2228.4 275.8 2231 258.4 2237.2 242.2C2243.4 225.9 2253.1 211.2 2265.6 199C2278.1 186.7 2293.1 177.3 2309.6 171.4C2326.1 165.5 2343.8 163.1 2361.3 164.6C2437.5 164.6 2483.2 212.8 2483.2 292.2L2483.2 305.8C2483.2 307.2 2482.6 308.6 2481.6 309.6C2480.5 310.6 2479.1 311.2 2477.7 311.2L2299.1 311.2C2298.9 319.4 2300.3 327.5 2303.4 335.1C2306.5 342.6 2311.2 349.5 2317.2 355.2C2323.1 360.8 2330.2 365.2 2337.9 368C2345.7 370.8 2354 372 2362.2 371.4C2373.3 373 2384.5 370.8 2394.2 365.4C2403.9 359.9 2410.6 353.4 2414.9 343.2C2415.2 341.9 2415.9 340.6 2417.1 339.8C2418.2 338.9 2419.6 338.5 2421 338.7L2475.8 341.4C2479.8 341.4 2481.6 341.4 2481 345.3C2472.2 392.9 2419.7 420.6 2360.4 419.9C2343.1 421.2 2325.7 418.8 2309.5 412.9C2293.2 407 2278.4 397.8 2266 385.8C2253.6 373.8 2244 359.3 2237.7 343.3C2231.5 327.4 2228.7 310.3 2229.7 293.2"/></g></svg>`;
+const F = { ind:new Set(), ch:new Set(), stage:new Set(), eff:new Set(), cat:new Set() };
+const INDS = [...new Set(UC.flatMap(u=>u.inds))];
+const EFFS = ['Quick win','Standard','Advanced'];
+const CATS = [...new Set(UC.map(u=>u.cat))];
+
+$('#stN').textContent = UC.length;
+$('#stI').textContent = INDS.length;
+
+const has = (u,ch) => !!(u[ch] && u[ch].length);
+const chLabel = u => has(u,'wa') && has(u,'rcs') ? 'Both' : has(u,'wa') ? 'WhatsApp only' : 'RCS only';
+
+/* ---------- filter chips ------------------------------------------------- */
+function chipRow(host, key, items, cls){
+ host.innerHTML = items.map(v=>`<button class="ch ${cls||''}" data-k="${key}" data-v="${esc(v)}">${v}<i>${
+   key==='ind' ? UC.filter(u=>u.inds.includes(v)).length :
+   key==='stage' ? UC.filter(u=>u.stage===v).length :
+   key==='eff' ? UC.filter(u=>u.effort===v).length :
+   key==='cat' ? UC.filter(u=>u.cat===v).length : ''
+ }</i></button>`).join('');
+}
+chipRow($('#fInd'),'ind',INDS);
+chipRow($('#fStage'),'stage',STAGES);
+chipRow($('#fEff'),'eff',EFFS);
+chipRow($('#fCat'),'cat',CATS);
+$('#fCh').innerHTML = `
+ <button class="ch wa" data-k="ch" data-v="wa">WhatsApp<i>${UC.filter(u=>has(u,'wa')).length}</i></button>
+ <button class="ch rcs" data-k="ch" data-v="rcs">RCS<i>${UC.filter(u=>has(u,'rcs')).length}</i></button>
+ <button class="ch" data-k="ch" data-v="both">Both<i>${UC.filter(u=>has(u,'wa')&&has(u,'rcs')).length}</i></button>`;
+
+document.querySelectorAll('.fbar .ch').forEach(b=>b.addEventListener('click',()=>{
+ const {k,v} = b.dataset;
+ F[k].has(v) ? F[k].delete(v) : F[k].add(v);
+ b.classList.toggle('on', F[k].has(v));
+ render();
+}));
+$('#clr').addEventListener('click',()=>{
+ Object.values(F).forEach(s=>s.clear());
+ document.querySelectorAll('.fbar .ch').forEach(b=>b.classList.remove('on'));
+ render();
+});
+
+let VIEW = 'grid';
+$('#vtog').addEventListener('click',e=>{
+ const b = e.target.closest('button'); if(!b) return;
+ VIEW = b.dataset.v;
+ $('#vtog').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+ render();
+});
+
+function match(u){
+ if(F.ind.size && !u.inds.some(i=>F.ind.has(i))) return false;
+ if(F.stage.size && !F.stage.has(u.stage)) return false;
+ if(F.eff.size && !F.eff.has(u.effort)) return false;
+ if(F.cat.size && !F.cat.has(u.cat)) return false;
+ if(F.ch.size){
+  const ok = (F.ch.has('wa') && has(u,'wa')) || (F.ch.has('rcs') && has(u,'rcs'))
+          || (F.ch.has('both') && has(u,'wa') && has(u,'rcs'));
+  if(!ok) return false;
+ }
+ return true;
+}
+
+/* ---------- cards ------------------------------------------------------- */
+function proofHTML(u){
+ return u.proof
+  ? `<div class="cproof"><b>${u.proof.n}</b><s>${u.proof.l}<br><b style="font-size:10.8px;color:var(--tx3);font-family:var(--body);font-weight:600">${u.proof.who}</b></s></div>`
+  : `<div class="cproof"><span class="ph">benchmark to source</span></div>`;
+}
+function cardHTML(u){
+ const both = has(u,'wa') && has(u,'rcs');
+ return `<article class="card" data-id="${u.id}">
+  <div class="cthumb"><div class="cbadge">
+    ${has(u,'wa')?'<span class="pill wa">WA</span>':''}
+    ${has(u,'rcs')?'<span class="pill rcs">RCS</span>':''}
+    ${u.effort==='Quick win'?'<span class="pill q">Quick win</span>':''}
+    ${u.status?`<span class="pill" style="background:var(--ambBg);border-color:var(--ambLn);color:var(--amb)">${u.status}</span>`:''}
+   </div><div class="scal">${thumbHTML(u)}</div></div>
+  <div class="cbody">
+   <h3>${u.name}</h3>
+   <p class="one">${u.one}</p>
+   <div class="ctags"><span class="tg st">${u.stage}</span>${u.inds.map(i=>`<span class="tg">${i}</span>`).join('')}<span class="tg">${u.cat}</span>${both?'':`<span class="tg">${chLabel(u)}</span>`}</div>
+   ${proofHTML(u)}
+  </div></article>`;
+}
+
+function render(){
+ const list = UC.filter(match);
+ $('#cnt').textContent = list.length;
+ $('#nores').style.display = list.length ? 'none' : 'block';
+ $('#grid').style.display  = (VIEW==='grid' && list.length) ? 'grid' : 'none';
+ $('#railwrap').style.display = (VIEW==='rail' && list.length) ? 'block' : 'none';
+
+ if(VIEW==='grid'){
+  $('#grid').innerHTML = list.map(cardHTML).join('');
+ } else {
+  $('#rail').innerHTML = STAGES.map(s=>{
+   const items = list.filter(u=>u.stage===s);
+   return `<div class="rcol">
+    <div class="rhd"><b>${s}</b><s>${items.length}</s></div>
+    <div style="font-size:10.8px;color:var(--tx3);line-height:1.4;margin:-6px 3px 10px">${STAGEDESC[s]}</div>
+    ${items.length ? items.map(u=>`<div class="rcard" data-id="${u.id}"><b>${u.name}</b>
+       <span style="font-size:11.2px;color:var(--tx2);line-height:1.4;display:block">${u.one.split('.')[0]}.</span>
+       <div class="rt">${has(u,'wa')?'<span class="pill wa">WA</span>':''}${has(u,'rcs')?'<span class="pill rcs">RCS</span>':''}${u.effort==='Quick win'?'<span class="pill q">Quick</span>':''}</div></div>`).join('')
+     : '<div class="rempty">Nothing here yet — a gap worth filling.</div>'}
+   </div>`;
+  }).join('');
+ }
+}
+document.addEventListener('click',e=>{
+ const c = e.target.closest('.card,.rcard,.pi');
+ if(c && c.dataset.id) open(c.dataset.id);
+});
+
+/* ---------- detail drawer ----------------------------------------------- */
+let players = [], current = null;
+
+function verdHTML(u){
+ const mark = c => (u.verdict.pick===c || u.verdict.pick==='Both' || u.verdict.pick==='Either') ? ' pick' : '';
+ const tag = c => u.verdict.pick===c ? '<em>Lead with this</em>' :
+   (u.verdict.pick==='Both'||u.verdict.pick==='Either') ? '<em>Both work</em>' : '';
+ const live = (ch,name,cls,body) => `<div class="vc${mark(name)}"><b><span class="dot ${cls}"></span>${name} ${tag(name)}</b><p>${body}</p></div>`;
+ const na = (name,cls,body) => `<div class="vc" style="background:var(--ambBg);border-color:var(--ambLn)">
+   <b><span class="dot" style="background:var(--amb)"></span>${name} <em style="background:rgba(169,105,10,.12);color:var(--amb)">Not possible</em></b>
+   <p style="color:#6B4405">${body}</p></div>`;
+ return `<div class="verd">
+  ${u.wa  ? live('wa','WhatsApp','wa',u.verdict.wa)   : na('WhatsApp','wa',u.waNA||u.verdict.wa)}
+  ${u.rcs ? live('rcs','RCS','rcs',u.verdict.rcs)     : na('RCS','rcs',u.rcsNA||u.verdict.rcs)}
+ </div>`;
+}
+
+function drawerHTML(u){
+ return `
+ <div class="printonly" style="align-items:center;justify-content:space-between;gap:16px;padding-bottom:13px;margin-bottom:14px;border-bottom:1px solid var(--line)">
+  ${LOGO_SVG}
+  <span style="font-family:var(--mono);font-size:8.6px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3)">Use case &middot; ${chLabel(u)}</span>
+ </div>
+ <div class="drhd">
+  <div class="ti">
+   <h2>${u.name}</h2>
+   <p class="one">${u.one}</p>
+   <div class="drtags"><span class="tg st">${u.stage}</span>${u.inds.map(i=>`<span class="tg">${i}</span>`).join('')}
+    <span class="tg">${u.cat}</span><span class="tg">${u.effort}</span><span class="tg">${chLabel(u)}</span>
+    ${u.status?`<span class="tg" style="background:var(--ambBg);color:var(--amb);border:1px dashed var(--ambLn)">${u.status}</span>`:''}</div>
+  </div>
+  <div class="drtools">
+   <button class="btn btn-s btn-xs" id="bLink">Copy link</button>
+   <button class="btn btn-s btn-xs" id="bPng">Save PNG</button>
+   <button class="btn btn-s btn-xs" id="bPrint">One-pager</button>
+  </div>
+  <button class="drx" id="bX">&#10005;</button>
+ </div>
+ <div class="drbody">
+  <div class="drL">
+   <div class="blk"><div class="k">At a glance</div>
+    <dl class="kv">
+     <dt>Trigger</dt><dd><span class="mono">${u.trigger}</span></dd>
+     <dt>Stage</dt><dd>${u.stage} — ${STAGEDESC[u.stage].toLowerCase()}</dd>
+     <dt>Category</dt><dd>${u.cat} <span style="color:var(--tx3)">${u.cat==='Utility'?'· cheap at volume, no marketing opt-in needed':u.cat==='Marketing'?'· needs marketing opt-in, watch frequency':'· inside the service window'}</span></dd>
+     <dt>Effort</dt><dd>${u.effort}</dd>
+    </dl></div>
+
+   <div class="blk"><div class="k">Netcore capabilities used</div>
+    <div class="caps">${u.caps.map(c=>`<span class="cap">${c}</span>`).join('')}</div></div>
+
+   <div class="blk"><div class="k">Before this can go live</div>
+    <ul class="ol">${u.prereq.map((p,i)=>`<li><span class="ck n">${i+1}</span><div>${p}</div></li>`).join('')}</ul></div>
+
+   <div class="blk"><div class="k">WhatsApp or RCS for this one?</div>${verdHTML(u)}</div>
+
+   <div class="blk"><div class="k">Proof</div>
+    ${u.proof ? `<div class="pfbox"><div class="n">${u.proof.n}</div><div class="l">${u.proof.l}<s>${u.proof.who}</s></div></div>`
+     : `<div class="pfbox" style="background:var(--ambBg);border-color:var(--ambLn)"><div class="l" style="color:#6B4405">
+        <b>No sourced benchmark yet.</b><br>Do not quote a number for this use case until marketing supplies one.
+        <s style="color:var(--amb)">Owner: PMM · needs a customer result or a category benchmark</s></div></div>`}</div>
+
+   <div class="blk"><div class="k">Talk track</div>
+    <ul class="ol">${u.talk.map(t=>`<li><span class="ck">&#10003;</span><div>${t}</div></li>`).join('')}</ul></div>
+
+   <div class="blk"><div class="k">The objection you will get</div>
+    <div class="obj"><div class="q">${u.obj.q}</div><div class="a">${u.obj.a}</div></div></div>
+
+   <div class="blk"><div class="k">Message copy to start from</div>
+    <div class="tplbox"><button class="cpbtn" id="bTpl">Copy</button>
+     <div class="tpl">${u.tpl.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/&lt;v&gt;/g,'<v>').replace(/&lt;\/v&gt;/g,'</v>')}</div></div>
+    <p style="font-size:11.5px;color:var(--tx3);margin-top:8px">Starting point, not an approved template. Variables map to customer-profile attributes.</p></div>
+  </div>
+
+  <div class="drR">
+   <div class="stage">
+    <div class="chtog" id="chtog">
+     <button data-c="wa"${u.wa?(u.rcs?' class="on"':' class="on"'):' disabled title="Not possible on WhatsApp"'}><span class="dot wa"></span>WhatsApp</button>
+     <button data-c="rcs"${u.rcs?(u.wa?'':' class="on"'):' disabled title="Not possible on RCS"'}><span class="dot rcs"></span>RCS</button>
+     <button data-c="both"${(u.wa&&u.rcs)?'':' disabled'}>Side by side</button>
+    </div>
+    <div class="phones" id="phones"></div>
+    <div class="player">
+     <div class="pbtns">
+      <button class="btn btn-s btn-xs" id="bReplay">&#8635; Replay</button>
+      <button class="btn btn-s btn-xs" id="bNext">Next step &#8250;</button>
+     </div>
+     <p class="hint">The journey plays itself and pauses on the <b>glowing button</b> — that is where the customer acts. Tap it to continue.</p>
+    </div>
+   </div>
+  </div>
+ </div>`;
+}
+
+function mountStage(u, mode){
+ players.forEach(p=>p.stop()); players = [];
+ const host = $('#phones'); host.innerHTML='';
+ const chans = mode==='both' ? ['wa','rcs'] : [mode];
+ chans.forEach(ch=>{
+  if(!has(u,ch)) return;
+  const col = document.createElement('div');
+  col.className = 'pcol';
+  col.innerHTML = `<div class="pcap"><span class="dot ${ch}"></span>${ch==='wa'?'WhatsApp':'RCS · Google Messages'}</div><div class="pw"></div>`;
+  host.appendChild(col);
+  players.push(mountPlayer(col.querySelector('.pw'), u, ch));
+ });
+}
+
+function open(id){
+ const u = UC.find(x=>x.id===id); if(!u) return;
+ current = u;
+ $('#dr').innerHTML = drawerHTML(u);
+ $('#dr').classList.add('on'); $('#dr').setAttribute('aria-hidden','false');
+ $('#scrim').classList.add('on'); document.body.classList.add('lock');
+ history.replaceState(null,'','#uc/'+id);
+ let mode = has(u,'wa') ? 'wa' : 'rcs';
+ mountStage(u, mode);
+
+ $('#bX').onclick = close;
+ $('#chtog').onclick = e=>{
+  const b = e.target.closest('button'); if(!b || b.disabled) return;
+  $('#chtog').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  mode = b.dataset.c; mountStage(u, mode);
+ };
+ $('#bReplay').onclick = ()=>players.forEach(p=>p.replay());
+ $('#bNext').onclick   = ()=>players.forEach(p=>p.next());
+ $('#bTpl').onclick = ()=>copy(u.tpl.replace(/<\/?v>/g,''),'Message copy copied');
+ $('#bLink').onclick = ()=>copy(location.href,'Link copied — paste it in Slack');
+ $('#bPrint').onclick = ()=>{ players.forEach(p=>p.end()); setTimeout(()=>window.print(),260) };
+ $('#bPng').onclick = ()=>savePNG(u);
+}
+function close(){
+ players.forEach(p=>p.stop()); players=[];
+ $('#dr').classList.remove('on'); $('#dr').setAttribute('aria-hidden','true');
+ $('#scrim').classList.remove('on'); document.body.classList.remove('lock');
+ history.replaceState(null,'',location.pathname+location.search);
+ current=null;
+}
+$('#scrim').addEventListener('click',close);
+
+/* ---------- clipboard + toast ------------------------------------------- */
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2000) }
+function copy(text,msg){
+ const done = ()=>toast(msg||'Copied');
+ if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done).catch(fallback);
+ else fallback();
+ function fallback(){
+  const a=document.createElement('textarea'); a.value=text; a.style.position='fixed'; a.style.opacity=0;
+  document.body.appendChild(a); a.select();
+  try{ document.execCommand('copy'); done() }catch(e){ toast('Copy failed — select it manually') }
+  a.remove();
+ }
+}
+
+/* ---------- PNG export (lazy, degrades to print) ------------------------ */
+let h2c=null;
+function loadH2C(){
+ if(h2c) return h2c;
+ h2c = new Promise((res,rej)=>{
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload=()=>res(window.html2canvas); s.onerror=()=>rej(); document.head.appendChild(s);
+ });
+ return h2c;
+}
+function savePNG(u){
+ toast('Rendering…');
+ loadH2C().then(fn=>fn($('#phones'),{backgroundColor:'#F7F2EC',scale:2.5,logging:false}))
+  .then(canvas=>canvas.toBlob(blob=>{
+   const a=document.createElement('a');
+   a.href=URL.createObjectURL(blob); a.download='netcore-'+u.id+'.png'; a.click();
+   URL.revokeObjectURL(a.href); toast('PNG saved');
+  }))
+  .catch(()=>toast('Image export unavailable offline — use One-pager to print'));
+}
+
+/* ---------- Cmd+K palette ---------------------------------------------- */
+const IDX = UC.map(u=>({u, s:[u.name,u.one,u.stage,u.cat,u.effort,u.trigger,u.inds.join(' '),u.caps.join(' '),chLabel(u)].join(' ').toLowerCase()}));
+let palSel = 0, palRes = [];
+function palOpen(){ $('#pal').classList.add('on'); $('#palq').value=''; palDraw(''); $('#palq').focus() }
+function palClose(){ $('#pal').classList.remove('on') }
+function palDraw(q){
+ q = q.trim().toLowerCase();
+ palRes = (q ? IDX.filter(x=>q.split(/\s+/).every(t=>x.s.includes(t))) : IDX).map(x=>x.u).slice(0,40);
+ palSel = 0;
+ $('#pallist').innerHTML = palRes.length ? palRes.map((u,i)=>
+  `<div class="pi${i?'':' sel'}" data-id="${u.id}"><b>${u.name}</b><s>${u.stage} · ${u.inds.join(', ')}</s>
+   <span class="rt">${has(u,'wa')?'<span class="pill wa">WA</span>':''}${has(u,'rcs')?'<span class="pill rcs">RCS</span>':''}</span></div>`).join('')
+  : `<div class="palempty">Nothing matches “${esc(q)}”.</div>`;
+}
+$('#openPal').addEventListener('click',palOpen);
+$('#palq').addEventListener('input',e=>palDraw(e.target.value));
+$('#pal').addEventListener('click',e=>{ if(e.target.id==='pal') palClose() });
+$('#pallist').addEventListener('click',e=>{ const p=e.target.closest('.pi'); if(p){ palClose(); open(p.dataset.id) } });
+document.addEventListener('keydown',e=>{
+ if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); $('#pal').classList.contains('on')?palClose():palOpen(); return }
+ if(e.key==='Escape'){ if($('#pal').classList.contains('on')) palClose(); else if(current) close(); return }
+ if(!$('#pal').classList.contains('on')) return;
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+  e.preventDefault();
+  palSel = Math.max(0, Math.min(palRes.length-1, palSel + (e.key==='ArrowDown'?1:-1)));
+  $('#pallist').querySelectorAll('.pi').forEach((p,i)=>p.classList.toggle('sel',i===palSel));
+  const el=$('#pallist').querySelectorAll('.pi')[palSel]; if(el) el.scrollIntoView({block:'nearest'});
+ }
+ if(e.key==='Enter' && palRes[palSel]){ palClose(); open(palRes[palSel].id) }
+});
+
+/* ---------- boot -------------------------------------------------------- */
+$('#logoSlot').insertAdjacentHTML('afterbegin', LOGO_SVG);
+render();
+const m = location.hash.match(/^#uc\/(.+)$/);
+if(m) open(decodeURIComponent(m[1]));
+</script>
+</body>
+</html>
